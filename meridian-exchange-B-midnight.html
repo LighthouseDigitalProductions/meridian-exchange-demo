@@ -1,0 +1,1509 @@
+<!doctype html>
+<html lang="en" data-skin="midnight">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Meridian Exchange</title>
+<style>html{color-scheme:dark}body{margin:0}</style>
+</head>
+<body>
+
+<script>document.documentElement.setAttribute('data-skin','midnight')</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* ================= THEME TOKENS ================= */
+  :root{
+    --display:'Sora','DM Sans',system-ui,sans-serif;
+    --body:'DM Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+    --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+    --grad:linear-gradient(95deg,#0E8A84 0%,#3A3FA6 100%);
+    --radius:20px;
+  }
+  html[data-skin="bright"]{
+    --bg:#F4F7FC; --surface:#FFFFFF; --surface-2:#EEF2FA; --ink:#0D2447; --ink-2:#34476A; --muted:#62738F;
+    --line:rgba(13,36,71,.10); --red:#0B7A76; --red-hi:#12A39B; --blue:#3A3FA6;
+    --buy:#B5701A; --sell:#168A53;
+    --shadow:0 22px 50px -26px rgba(13,36,71,.38), 0 2px 6px rgba(13,36,71,.05);
+    --glass:rgba(255,255,255,.80);
+    --hero-a:#E3F5F2; --hero-b:#E6EDFB;
+    --concept-bg:#0D2447; --concept-ink:#DDE6F7;
+    color-scheme:light;
+  }
+  html[data-skin="midnight"]{
+    --bg:#050D20; --surface:#0B1832; --surface-2:#10224A; --ink:#EDF2FC; --ink-2:#BAC8E4; --muted:#8CA0C4;
+    --line:rgba(160,185,235,.15); --red:#2DD4BF; --red-hi:#5EEAD4; --blue:#8B93FF;
+    --buy:#FBBF5C; --sell:#43D697;
+    --shadow:0 26px 60px -28px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.04);
+    --glass:rgba(9,22,48,.72);
+    --hero-a:#0B1A3A; --hero-b:#050D20;
+    --concept-bg:#020813; --concept-ink:#9FB2D6;
+    --grad:linear-gradient(95deg,#14B8A6 0%,#6366F1 100%);
+    color-scheme:dark;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-padding-top:84px}
+  body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+  img,svg{display:block;max-width:100%}
+  ::selection{background:var(--red);color:#fff}
+  :focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:6px}
+  html[data-skin="midnight"] :focus-visible{outline-color:#A5ABFF}
+  .skip{position:absolute;left:-999px;top:8px;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;z-index:200}
+  .skip:focus{left:12px}
+  .wrap{width:100%;max-width:1240px;margin:0 auto;padding:0 28px}
+  h1,h2,h3{font-family:var(--display);letter-spacing:-.02em;line-height:1.08}
+  .eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--red-hi)}
+  html[data-skin="bright"] .eyebrow{color:var(--red)}
+  .eyebrow::before{content:"";width:26px;height:2px;background:var(--grad);border-radius:2px}
+
+  /* ================= CONCEPT RIBBON ================= */
+  .concept{background:var(--concept-bg);color:var(--concept-ink);font-size:12.5px;text-align:center;padding:8px 40px 8px 16px;position:relative;letter-spacing:.01em}
+  .concept b{color:#fff;font-weight:600}
+  .concept button{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:26px;height:26px;border-radius:50%;color:var(--concept-ink);font-size:16px;line-height:1}
+  .concept button:hover{background:rgba(255,255,255,.12)}
+
+  /* ================= NAV ================= */
+  .nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:60;background:var(--glass);backdrop-filter:blur(14px) saturate(1.3);-webkit-backdrop-filter:blur(14px) saturate(1.3);border-bottom:1px solid var(--line)}
+  .nav-row{display:flex;align-items:center;justify-content:space-between;gap:20px;height:72px}
+  .logo{display:flex;align-items:center;gap:12px}
+  .logo svg{width:44px;height:44px;flex:none}
+  .logo-text{display:flex;flex-direction:column;line-height:1}
+  .logo-text b{font-family:var(--display);font-weight:800;font-size:19px;letter-spacing:-.01em;color:var(--ink)}
+  .logo-text b i{font-style:normal;color:var(--red-hi)}
+  html[data-skin="bright"] .logo-text b i{color:var(--red)}
+  .logo-text small{font-size:11px;color:var(--muted);margin-top:4px;letter-spacing:.04em}
+  .nav-links{display:flex;gap:6px;align-items:center}
+  .nav-links a{padding:9px 14px;border-radius:999px;font-weight:500;font-size:15px;color:var(--ink-2);transition:background .2s,color .2s}
+  .nav-links a:hover{background:var(--surface-2);color:var(--ink)}
+  .nav-cta{background:var(--grad);color:#fff !important;font-weight:700 !important;padding:10px 20px !important;box-shadow:0 10px 22px -10px rgba(14,138,132,.6)}
+  .nav-cta:hover{filter:brightness(1.08);background:var(--grad) !important}
+  @media(max-width:820px){.nav-links a:not(.nav-cta){display:none}}
+
+  /* ================= HERO ================= */
+  .hero{position:relative;overflow:hidden;isolation:isolate;padding:44px 0 64px;min-height:min(calc(100svh - 110px),900px)}
+  .hero-wash{position:absolute;inset:0;z-index:-2;background:
+      radial-gradient(60% 70% at 78% 40%,var(--hero-b),transparent 70%),
+      linear-gradient(100deg,var(--hero-a) 0%,var(--bg) 52%,var(--hero-b) 100%)}
+  html[data-skin="midnight"] .hero-wash{background:
+      radial-gradient(46% 62% at 72% 48%,rgba(58,92,214,.30),transparent 70%),
+      radial-gradient(40% 50% at 8% 90%,rgba(20,184,166,.14),transparent 70%),
+      linear-gradient(180deg,#071230 0%,#050D20 100%)}
+  .globe-stage{position:absolute;inset:0;z-index:0}
+  #globe{width:100%;height:100%;display:block;touch-action:pan-y}
+  .plabel{position:absolute;left:0;top:0;transform:translate(-50%,-140%);font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;padding:5px 10px;border-radius:999px;background:var(--glass);border:1px solid var(--line);color:var(--ink);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .3s;backdrop-filter:blur(8px)}
+  .plabel.on{opacity:1}
+  .plabel.dest{background:var(--grad);color:#fff;border-color:transparent}
+  .hero-grid{position:relative;z-index:2;pointer-events:none}
+  .hero-copy{max-width:580px;pointer-events:none}
+  .hero-copy > *{pointer-events:auto}
+  .hero h1{font-weight:800;font-size:clamp(38px,5.6vw,66px);margin:16px 0 16px}
+  .hero h1 em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  html[data-skin="midnight"] .hero h1 em{background:linear-gradient(95deg,#5EEAD4,#A5ABFF);-webkit-background-clip:text;background-clip:text}
+  .sub{font-size:18px;color:var(--ink-2);max-width:500px}
+
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:26px 0 18px;max-width:560px}
+  .chip{display:inline-flex;align-items:center;gap:8px;padding:7px 14px 7px 8px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-family:var(--mono);font-size:13px;font-weight:500;color:var(--ink);transition:transform .2s,border-color .2s,box-shadow .2s,background .2s;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+  .chip:hover{transform:translateY(-2px);border-color:var(--red-hi)}
+  .chip[aria-pressed="true"]{background:var(--grad);color:#fff;border-color:transparent;box-shadow:0 12px 24px -12px rgba(14,138,132,.8)}
+  .flag{display:inline-block;width:26px;height:18px;border-radius:4px;overflow:hidden;flex:none;box-shadow:0 0 0 1px rgba(0,0,0,.12)}
+  .flag svg{width:100%;height:100%}
+
+  .calc{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);max-width:560px;position:relative}
+  html[data-skin="midnight"] .calc{background:linear-gradient(180deg,rgba(18,38,80,.78),rgba(8,20,44,.82));backdrop-filter:blur(14px)}
+  .calc::before{content:"";position:absolute;left:20px;right:20px;top:0;height:3px;background:var(--grad);border-radius:0 0 4px 4px}
+  .tabs{display:grid;grid-template-columns:1fr 1fr;background:var(--surface-2);border-radius:12px;padding:4px;gap:4px;margin-bottom:16px}
+  .tab{padding:9px 10px;border-radius:9px;font-weight:700;font-size:14px;color:var(--muted);transition:background .2s,color .2s}
+  .tab[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 2px 8px rgba(0,0,0,.12)}
+  html[data-skin="midnight"] .tab[aria-selected="true"]{background:#1A3270}
+  .calc-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .field label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin-bottom:6px;letter-spacing:.02em}
+  .field input,.field select,.field textarea{width:100%;font:inherit;font-weight:600;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;transition:border-color .2s,box-shadow .2s}
+  html[data-skin="bright"] .field input,html[data-skin="bright"] .field select,html[data-skin="bright"] .field textarea{background:#fff}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:0;border-color:var(--blue);box-shadow:0 0 0 4px rgba(58,63,166,.16)}
+  html[data-skin="midnight"] .field input:focus,html[data-skin="midnight"] .field select:focus,html[data-skin="midnight"] .field textarea:focus{box-shadow:0 0 0 4px rgba(108,139,255,.22)}
+  .field textarea{resize:vertical;min-height:96px;font-weight:500}
+  .result{margin-top:14px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .result .lbl{font-size:12.5px;font-weight:700;color:var(--muted)}
+  .result .big{font-family:var(--display);font-weight:800;font-size:clamp(28px,4vw,38px);letter-spacing:-.02em;line-height:1.1;font-variant-numeric:tabular-nums}
+  .result .rate{font-family:var(--mono);font-size:12px;color:var(--muted);text-align:right}
+  .calc-actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 22px;border-radius:12px;font-weight:700;font-size:15px;transition:transform .2s,box-shadow .2s,filter .2s,background .2s}
+  .btn-primary{background:var(--grad);color:#fff;box-shadow:0 14px 28px -14px rgba(14,138,132,.85)}
+  .btn-primary:hover{transform:translateY(-2px);filter:brightness(1.08)}
+  .btn-ghost{background:var(--surface);border:1.5px solid var(--line);color:var(--ink)}
+  html[data-skin="midnight"] .btn-ghost{background:rgba(255,255,255,.04)}
+  .btn-ghost:hover{border-color:var(--ink-2);transform:translateY(-2px)}
+  .fine{font-size:12px;color:var(--muted);margin-top:12px}
+
+  /* banknote (CSS 3D) */
+  .note{position:absolute;z-index:3;width:var(--nw,340px);aspect-ratio:2.1;perspective:1200px;pointer-events:none;left:0;top:0}
+  .note-fly,.note-float,.note-tilt,.note-card{width:100%;height:100%}
+  .note-float{animation:bob 6.5s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0) rotate(-1.2deg)}50%{transform:translateY(-10px) rotate(.8deg)}}
+  .note-tilt{transform-style:preserve-3d;transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .25s ease-out}
+  .note-card{position:relative;transform-style:preserve-3d}
+  .note-face{position:absolute;inset:0;border-radius:16px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;color:#fff;
+    background:linear-gradient(125deg,var(--c1),var(--c2));
+    box-shadow:0 30px 50px -22px rgba(3,10,30,.65),0 0 0 1px rgba(255,255,255,.22) inset}
+  .note-face::before{content:"";position:absolute;inset:0;background:var(--guil);background-size:cover;opacity:.55;mix-blend-mode:soft-light}
+  .note-face::after{content:"";position:absolute;inset:7px;border:1.5px solid rgba(255,255,255,.5);border-radius:11px}
+  .note-back{transform:rotateY(180deg);display:grid;place-items:center;text-align:center}
+  .note-back .nb{position:relative;z-index:1;font-family:var(--display)}
+  .note-back .nb svg{width:46px;height:46px;margin:0 auto 6px;opacity:.95}
+  .note-back .nb b{display:block;font-size:20px;font-weight:800;letter-spacing:.02em}
+  .note-back .nb small{font-size:10px;letter-spacing:.22em;text-transform:uppercase;opacity:.8}
+  .n-top{position:absolute;left:20px;right:20px;top:18px;display:flex;justify-content:space-between;align-items:flex-start;z-index:1}
+  .n-top .flag{width:52px;height:35px;border-radius:6px;box-shadow:0 0 0 2px rgba(255,255,255,.65)}
+  .n-code{text-align:right;line-height:1}
+  .n-code b{display:block;font-family:var(--display);font-weight:800;font-size:clamp(22px,2.2vw,30px);letter-spacing:.06em}
+  .n-code small{font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.85;display:block;margin-top:4px}
+  .n-amt{position:absolute;left:20px;right:20px;bottom:36px;z-index:1;font-family:var(--display);font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;text-shadow:0 2px 14px rgba(0,0,0,.28);white-space:nowrap}
+  .n-amt .sym{opacity:.8;margin-right:6px;font-weight:700}
+  .n-foot{position:absolute;left:20px;right:20px;bottom:14px;z-index:1;display:flex;justify-content:space-between;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+  .note-glare{position:absolute;inset:0;border-radius:16px;overflow:hidden;z-index:2;pointer-events:none}
+  .note-glare::before{content:"";position:absolute;top:-30%;bottom:-30%;width:40%;left:-60%;transform:rotate(18deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);animation:glare 5.5s ease-in-out infinite}
+  @keyframes glare{0%,55%{left:-60%}100%{left:130%}}
+
+  /* ================= SECTIONS ================= */
+  section{padding:104px 0}
+  .head{max-width:640px;margin-bottom:44px}
+  .head h2{font-size:clamp(30px,4vw,46px);font-weight:800;margin:14px 0 12px}
+  .head p{color:var(--ink-2);font-size:17px}
+  .head.center{margin-inline:auto;text-align:center}
+  .head.center .eyebrow{justify-content:center}
+
+  /* rates */
+  .rate-tools{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:26px}
+  .search{position:relative;flex:1 1 320px;max-width:460px}
+  .search input{width:100%;padding:14px 16px 14px 46px;border-radius:14px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:500}
+  .search input:focus{outline:0;border-color:var(--blue);box-shadow:0 0 0 4px rgba(58,63,166,.14)}
+  .search svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--muted)}
+  .stamp{font-family:var(--mono);font-size:12px;color:var(--muted);display:inline-flex;align-items:center;gap:8px}
+  .stamp i{width:8px;height:8px;border-radius:50%;background:var(--sell);box-shadow:0 0 0 0 var(--sell);animation:ping 2.4s infinite}
+  @keyframes ping{0%{box-shadow:0 0 0 0 rgba(22,138,83,.55)}80%,100%{box-shadow:0 0 0 10px rgba(22,138,83,0)}}
+  .rate-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+  .rate-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);transition:transform .25s ease,border-color .25s;transform-style:preserve-3d;will-change:transform;display:flex;flex-direction:column}
+  .rate-card:hover{border-color:var(--red-hi)}
+  .rc-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+  .rc-head .flag{width:42px;height:28px;border-radius:6px}
+  .rc-head h3{font-size:17px;font-weight:700}
+  .rc-head p{font-family:var(--mono);font-size:12px;color:var(--muted)}
+  .pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .rate{background:var(--surface-2);border-radius:12px;padding:12px}
+  .rate span{display:block;font-size:11.5px;font-weight:700;color:var(--muted);letter-spacing:.03em}
+  .rate strong{display:block;font-family:var(--mono);font-size:15.5px;font-weight:500;margin:4px 0 2px;letter-spacing:-.02em}
+  .rate.buy strong{color:var(--buy)}
+  .rate.sell strong{color:var(--sell)}
+  .rate em{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .rc-btn{margin-top:14px;padding:10px;border-radius:10px;font-weight:700;font-size:13.5px;border:1.5px solid var(--line);transition:background .2s,border-color .2s,color .2s}
+  .rc-btn:hover{background:var(--grad);color:#fff;border-color:transparent}
+  .empty{grid-column:1/-1;padding:40px;text-align:center;color:var(--muted)}
+  @media(max-width:1100px){.rate-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){.rate-grid{grid-template-columns:1fr}}
+
+  /* services */
+  .svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .svc{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:30px 28px 28px;box-shadow:var(--shadow);position:relative;overflow:hidden;transition:transform .25s,border-color .25s;transform-style:preserve-3d;will-change:transform}
+  .svc::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:var(--grad)}
+  .svc:hover{border-color:var(--red-hi)}
+  .svc .ic{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;background:var(--surface-2);color:var(--red-hi);margin-bottom:18px}
+  html[data-skin="bright"] .svc .ic{color:var(--red)}
+  .svc .ic svg{width:26px;height:26px}
+  .svc h3{font-size:22px;font-weight:800;margin-bottom:8px}
+  .svc > p{color:var(--ink-2);font-size:15px;margin-bottom:16px}
+  .svc ul{list-style:none;display:grid;gap:9px;margin-bottom:22px}
+  .svc li{display:flex;gap:10px;font-size:14.5px;color:var(--ink-2)}
+  .svc li::before{content:"";flex:none;width:18px;height:18px;margin-top:2px;border-radius:50%;background:var(--sell) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5.5 10.5l3 3 6-6.5' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat}
+  .svc .btn{width:100%}
+  .extras{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:22px}
+  .extra{padding:20px;border-radius:16px;background:var(--surface);border:1px solid var(--line);transition:transform .2s,border-color .2s}
+  .extra:hover{transform:translateY(-3px);border-color:var(--red-hi)}
+  .extra h3{font-size:16px;font-weight:700;margin-bottom:6px}
+  .extra p{font-size:14px;color:var(--muted)}
+  @media(max-width:960px){.svc-grid{grid-template-columns:1fr}.extras{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:520px){.extras{grid-template-columns:1fr}}
+
+  /* about */
+  .about{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:start}
+  .about p{color:var(--ink-2);margin-bottom:16px;font-size:17px}
+  .why{list-style:none;display:grid;gap:14px;margin-top:8px}
+  .why li{display:grid;grid-template-columns:auto 1fr;gap:14px;padding:16px 18px;border-radius:16px;background:var(--surface);border:1px solid var(--line)}
+  .why li b{display:block;font-size:15.5px}
+  .why li span{font-size:14.5px;color:var(--muted)}
+  .why .dot{width:10px;height:10px;border-radius:50%;background:var(--grad);margin-top:7px}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:56px}
+  .stat{padding:24px 20px;border-radius:18px;background:var(--surface);border:1px solid var(--line);text-align:center;box-shadow:var(--shadow)}
+  .stat b{display:block;font-family:var(--display);font-weight:800;font-size:clamp(30px,4vw,44px);letter-spacing:-.03em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  html[data-skin="midnight"] .stat b{background:linear-gradient(95deg,#5EEAD4,#A5ABFF);-webkit-background-clip:text;background-clip:text}
+  .stat span{font-size:13.5px;color:var(--muted)}
+  @media(max-width:900px){.about{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
+
+  /* visit */
+  .visit{display:grid;grid-template-columns:1fr 1.15fr;gap:22px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:28px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+  .card::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:var(--grad)}
+  .card h3{font-size:22px;font-weight:800;margin-bottom:18px}
+  .rows{display:grid;gap:16px}
+  .row{display:grid;grid-template-columns:40px 1fr;gap:14px;align-items:start}
+  .row .ri{width:40px;height:40px;border-radius:12px;background:var(--surface-2);display:grid;place-items:center;color:var(--red-hi)}
+  html[data-skin="bright"] .row .ri{color:var(--red)}
+  .row .ri svg{width:20px;height:20px}
+  .row small{display:block;font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+  .row div > span,.row a{font-weight:600;font-size:15.5px}
+  .row a:hover{color:var(--red-hi)}
+  .map{margin-top:22px;border-radius:16px;overflow:hidden;border:1px solid var(--line);height:230px;background:var(--surface-2)}
+  .map-ph{width:100%;height:100%;display:grid;place-items:center;font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);background:linear-gradient(var(--line) 1px,transparent 1px) 0 0/36px 36px,linear-gradient(90deg,var(--line) 1px,transparent 1px) 0 0/36px 36px,var(--surface-2)}
+  .form{display:grid;gap:14px}
+  #msgForm{height:calc(100% - 52px);grid-template-rows:auto 1fr auto auto}
+  #msgForm .field:has(textarea){display:flex;flex-direction:column}
+  #msgForm textarea{flex:1;min-height:120px;resize:vertical}
+  .form .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .okbox{display:none;padding:22px;border-radius:14px;background:var(--surface-2);text-align:center}
+  .okbox.on{display:block}
+  .okbox b{font-family:var(--display);font-size:20px;display:block;margin-bottom:6px}
+  @media(max-width:900px){.visit{grid-template-columns:1fr}.form .two{grid-template-columns:1fr}}
+
+  footer{border-top:1px solid var(--line);padding:34px 0 44px;color:var(--muted);font-size:14px}
+  .foot{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+  .social{display:flex;gap:10px}
+  .social a{width:42px;height:42px;border-radius:50%;background:var(--grad);display:grid;place-items:center;color:#fff;transition:transform .2s}
+  .social a:hover{transform:translateY(-3px)}
+  .social svg{width:20px;height:20px}
+
+  /* dialog */
+  dialog{margin:auto;border:0;border-radius:24px;padding:0;width:min(520px,calc(100vw - 28px));max-height:calc(100svh - 28px);overflow:auto;background:var(--surface);color:var(--ink);box-shadow:0 40px 90px -30px rgba(0,0,0,.7)}
+  dialog::backdrop{background:rgba(4,12,32,.62);backdrop-filter:blur(6px)}
+  .dlg{padding:28px;position:relative}
+  .dlg::before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--grad)}
+  .dlg h3{font-size:24px;font-weight:800;margin-bottom:6px}
+  .dlg .x{position:absolute;right:14px;top:16px;width:36px;height:36px;border-radius:50%;font-size:22px;color:var(--muted)}
+  .dlg .x:hover{background:var(--surface-2)}
+  .sum{display:flex;justify-content:space-between;gap:12px;padding:14px 16px;border-radius:14px;background:var(--surface-2);margin:14px 0 18px;font-size:15px}
+  .sum b{font-family:var(--display)}
+  .sum small{display:block;color:var(--muted);font-size:12px}
+  .dlg .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .success{display:none;text-align:center;padding:8px 0 4px}
+  .success.on{display:block}
+  .code{display:inline-block;font-family:var(--mono);font-weight:500;font-size:22px;letter-spacing:.12em;padding:10px 18px;border-radius:12px;background:var(--surface-2);margin:12px 0;border:1.5px dashed var(--red-hi)}
+  .tick{width:64px;height:64px;border-radius:50%;background:var(--sell);display:grid;place-items:center;margin:4px auto 14px;animation:pop .5s cubic-bezier(.2,1.4,.4,1)}
+  @keyframes pop{from{transform:scale(.2);opacity:0}}
+
+  /* reveal */
+  .rv{opacity:0;transform:translateY(22px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+  .rv.in{opacity:1;transform:none}
+  .intro{opacity:0;transform:translateY(18px);animation:intro .9s cubic-bezier(.2,.7,.2,1) forwards}
+  @keyframes intro{to{opacity:1;transform:none}}
+  .d1{animation-delay:.1s}.d2{animation-delay:.25s}.d3{animation-delay:.4s}.d4{animation-delay:.55s}.d5{animation-delay:.7s}
+
+  /* mobile hero */
+  @media(max-width:979px){
+    .hero{padding-top:0}
+    .globe-stage{inset:0 0 auto 0;height:min(62svh,520px)}
+    .hero-copy{padding-top:min(56svh,470px)}
+    .hero h1{font-size:clamp(34px,9.4vw,46px)}
+    .calc-row{grid-template-columns:1fr}
+    .wrap{padding:0 18px}
+    section{padding:76px 0}
+  }
+  @media(max-width:600px){
+    .nav-cta{white-space:nowrap;padding:9px 14px !important;font-size:13px}
+    .concept{font-size:11.5px;padding:7px 36px 7px 12px}
+    .concept .cx-long{display:none}
+    .n-top{left:14px;right:14px;top:12px}
+    .n-top .flag{width:38px;height:26px}
+    .n-code b{font-size:18px}
+    .n-code small{display:none}
+    .n-amt{left:14px;right:14px;bottom:28px}
+    .n-foot{left:14px;right:14px;bottom:10px;font-size:8px;letter-spacing:.08em}
+    .n-foot span:last-child{display:none}
+    #msgForm{height:auto}
+    .branches .bl{width:100%}
+    .mix{margin-left:auto}
+  }
+  @media(prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .rv{opacity:1;transform:none;transition:none}
+    .intro{animation:none;opacity:1;transform:none}
+    .note-float,.note-glare::before,.stamp i{animation:none}
+  }
+
+  /* ================= OWNER FEATURES ================= */
+  .branches{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:18px}
+  .branches .bl{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-right:6px}
+  .bp{padding:6px 13px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-family:var(--mono);font-size:12.5px;font-weight:500;color:var(--ink);transition:background .2s,border-color .2s,transform .2s}
+  .bp:hover{border-color:var(--red-hi);transform:translateY(-1px)}
+  .bp[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:transparent}
+  .flash{animation:flash 1.3s ease-out}
+  @keyframes flash{0%{box-shadow:0 0 0 0 rgba(20,163,155,.7)}100%{box-shadow:0 0 0 18px rgba(20,163,155,0)}}
+
+  .bills{margin-top:16px;padding-top:14px;border-top:1px dashed var(--line)}
+  .bills-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+  .bills-head .lbl{font-size:12.5px;font-weight:700;color:var(--muted)}
+  .mix{display:inline-grid;grid-template-columns:1fr 1fr;background:var(--surface-2);border-radius:9px;padding:3px;gap:3px}
+  .mixb{padding:4px 12px;border-radius:7px;font-size:12px;font-weight:700;color:var(--muted)}
+  .mixb[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 5px rgba(0,0,0,.14)}
+  html[data-skin="midnight"] .mixb[aria-pressed="true"]{background:#1A3270}
+  .bill-list{display:flex;flex-wrap:wrap;gap:8px;align-items:center;min-height:40px}
+  .bill{display:inline-flex;align-items:center;gap:8px;padding:0 10px 0 0;border-radius:8px;background:var(--surface-2);overflow:hidden;font-family:var(--mono);font-size:12.5px;color:var(--ink)}
+  .bill i{font-style:normal;font-weight:500;color:#fff;padding:9px 10px;background:linear-gradient(135deg,var(--b1),var(--b2));min-width:56px;text-align:center;text-shadow:0 1px 3px rgba(0,0,0,.35)}
+  .bill b{font-weight:500}
+  .bill-note{font-family:var(--mono);font-size:12px;color:var(--muted)}
+
+  .owner-toggle{display:inline-flex;align-items:center;gap:8px;padding:11px 16px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);font-weight:700;font-size:13.5px;color:var(--ink);transition:background .2s,border-color .2s}
+  .owner-toggle svg{width:16px;height:16px}
+  .owner-toggle:hover{border-color:var(--ink-2)}
+  .owner-toggle[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:transparent}
+  .edit-bar{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:16px 18px;border-radius:16px;background:var(--surface-2);border:1.5px dashed var(--red-hi);margin-bottom:22px}
+  .edit-bar p{flex:1 1 360px;font-size:14.5px;color:var(--ink-2);min-width:0}
+  .edit-bar p b{color:var(--ink)}
+  .eb-actions{display:flex;gap:10px;flex-wrap:wrap}
+  .eb-actions .btn{padding:10px 16px;font-size:14px}
+  .redit{display:block;width:100%;margin:4px 0 2px;padding:6px 8px;border-radius:8px;border:1.5px solid var(--red-hi);background:var(--bg);color:var(--ink);font-family:var(--mono);font-size:14px;min-width:0}
+  html[data-skin="bright"] .redit{background:#fff}
+  .redit:focus{outline:0;box-shadow:0 0 0 4px rgba(20,163,155,.22)}
+  .spread{margin-top:10px;font-family:var(--mono);font-size:12px;color:var(--muted)}
+  .spread b{color:var(--ink);font-weight:500}
+
+  .lock{display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--ink-2);margin:-6px 0 16px}
+  .lock svg{width:18px;height:18px;flex:none;color:var(--red-hi)}
+  .ticket{margin:16px 0 4px;text-align:left;border-radius:16px;border:1px solid var(--line);background:var(--surface-2);overflow:hidden;position:relative}
+  .tk-main{padding:18px 18px 14px}
+  .tk-route{display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .tk-route small{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .tk-route b{display:block;font-family:var(--display);font-size:32px;font-weight:800;letter-spacing:.02em;line-height:1.1}
+  .tk-route span{font-size:13px;color:var(--ink-2)}
+  .tk-route svg{width:34px;height:34px;color:var(--red-hi);flex:none}
+  .tk-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px;margin-top:16px}
+  .tk-grid dt,.tk-bills dt{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .tk-grid dd{font-weight:700;font-size:15px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+  .tk-bills{margin-top:14px;font-size:13.5px}
+  .tk-bills span{display:block;font-family:var(--mono);font-size:12.5px;color:var(--ink-2);overflow-wrap:anywhere}
+  .tk-stub{position:relative;border-top:2px dashed var(--line);padding:14px 18px 16px;display:grid;grid-template-columns:1fr auto;gap:6px 16px;align-items:center}
+  .tk-stub::before,.tk-stub::after{content:"";position:absolute;top:-11px;width:20px;height:20px;border-radius:50%;background:var(--surface);border:1px solid var(--line)}
+  .tk-stub::before{left:-11px}.tk-stub::after{right:-11px}
+  .tk-stub small{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .tk-stub b{font-family:var(--mono);font-size:24px;font-weight:500;font-variant-numeric:tabular-nums}
+  .barcode{height:38px;width:150px;color:var(--ink);grid-row:1/3;grid-column:2}
+  .barcode svg{width:100%;height:100%;display:block}
+  .tk-stub .code{grid-column:1/3;margin:6px 0 0;justify-self:start;font-size:16px;padding:6px 12px}
+
+  .owner{background:var(--surface-2)}
+  .own-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+  .own{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px;min-width:0}
+  .own h3{font-size:19px;font-weight:800;text-wrap:balance}
+  .own p{color:var(--ink-2);font-size:15px;flex:1}
+  .own .btn{padding:10px 14px;font-size:14px;align-self:flex-start;margin-top:6px}
+  .launch{margin-top:26px;padding:26px 28px;border-radius:var(--radius);background:var(--surface);border:1px solid var(--line);display:grid;grid-template-columns:minmax(0,240px) 1fr;gap:18px 32px;align-items:start}
+  .launch h3{font-size:19px;font-weight:800}
+  .launch ul{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:10px 28px;color:var(--ink-2);font-size:15px}
+  .launch li{display:flex;gap:10px;min-width:0}
+  .launch li::before{content:"";flex:none;width:8px;height:8px;margin-top:8px;border-radius:50%;background:var(--grad)}
+  .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;pointer-events:none;background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;font-weight:600;font-size:14px;z-index:200;transition:opacity .25s,transform .25s;max-width:calc(100vw - 32px);text-align:center}
+  .toast.on{opacity:1;transform:translate(-50%,0)}
+  @media(max-width:1100px){.own-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:700px){.own-grid{grid-template-columns:1fr}.launch{grid-template-columns:1fr}.launch ul{grid-template-columns:1fr}.tk-route b{font-size:26px}.barcode{width:110px}}
+  .no-js .rv{opacity:1;transform:none}
+</style>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="concept" id="concept" role="note">
+  Sample design for a <b>fictional exchange</b> · prepared by <b data-site="studio">Studio</b> · <span class="cx-long">rates shown are </span><b>sample rates</b><span class="cx-long">, not live pricing</span>
+  <button type="button" aria-label="Dismiss notice" id="conceptX">×</button>
+</div>
+
+<header class="nav">
+  <div class="wrap nav-row">
+    <a class="logo" href="#top" aria-label="Meridian Exchange home">
+      <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <circle cx="24" cy="24" r="19" stroke="#0B7A76" stroke-width="2.6"/>
+        <ellipse cx="24" cy="24" rx="8.5" ry="19" stroke="#0B7A76" stroke-width="2"/>
+        <path d="M6 18h36M6 30h36M24 5v38" stroke="#0B7A76" stroke-width="1.6"/>
+        <path d="M9 38c10 6 26 2 31-11" stroke="#3A3FA6" stroke-width="2.4" stroke-linecap="round"/>
+        <g fill="#3A3FA6"><circle cx="34" cy="9" r="1.6"/><circle cx="39" cy="14" r="1.3"/><circle cx="29" cy="6" r="1.3"/></g>
+      </svg>
+      <span class="logo-text"><b>MERIDIAN <i>EXCHANGE</i></b><small data-site="tagline">Foreign Currency</small></span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#top">Home</a><a href="#rates">Rates</a><a href="#services">Services</a><a href="#about">About Us</a><a href="#visit">Visit</a><a href="#owner">For the owner</a>
+      <a href="#top" class="nav-cta" id="navReserve">Reserve currency</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero" id="top">
+  <div class="hero-wash"></div>
+  <div class="globe-stage" id="stage">
+    <canvas id="globe" aria-label="Interactive 3D globe. Choose a destination currency to see an exchange route from Bayview."></canvas>
+    <div class="plabel" id="lblHome">Bayview, CA</div>
+    <div class="plabel dest" id="lblDest"></div>
+  </div>
+
+  <div class="note" id="note" aria-hidden="true">
+    <div class="note-fly" id="noteFly"><div class="note-float"><div class="note-tilt" id="noteTilt"><div class="note-card" id="noteCard">
+      <div class="note-face note-front" id="noteFront">
+        <div class="n-top"><span class="flag" id="nFlag"></span><div class="n-code"><b id="nCode">EUR</b><small id="nName">Euro</small></div></div>
+        <div class="n-amt" id="nAmt"><span class="sym">€</span><span id="nVal">0.00</span></div>
+        <div class="n-foot"><span>Meridian Exchange</span><span>Illustrative note</span></div>
+        <div class="note-glare"></div>
+      </div>
+      <div class="note-face note-back">
+        <div class="nb">
+          <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="19" stroke="#fff" stroke-width="2.4"/><ellipse cx="24" cy="24" rx="8.5" ry="19" stroke="#fff" stroke-width="1.8"/><path d="M6 18h36M6 30h36M24 5v38" stroke="#fff" stroke-width="1.5"/></svg>
+          <b>MERIDIAN EXCHANGE</b><small>Foreign Currency</small>
+        </div>
+      </div>
+    </div></div></div></div>
+  </div>
+
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <div class="branches intro d1" id="branches" role="group" aria-label="Choose a branch"></div>
+      <span class="eyebrow intro d1" data-site="eyebrow">Foreign Currency</span>
+      <h1 class="intro d2">Where are you <em>headed?</em></h1>
+      <p class="sub intro d3">Pick a destination and see what your dollars become. Reserve it online, then stop by <span data-site="city">Bayview</span>.</p>
+
+      <div class="chips intro d4" id="chips" role="group" aria-label="Choose a currency"></div>
+
+      <div class="calc intro d5" id="calc">
+        <div class="tabs" role="tablist" aria-label="Buy or sell">
+          <button class="tab" role="tab" id="tabBuy" aria-selected="true" type="button">Buy currency</button>
+          <button class="tab" role="tab" id="tabSell" aria-selected="false" type="button">Sell currency</button>
+        </div>
+        <div class="calc-row">
+          <div class="field"><label for="amt" id="amtLbl">I'm exchanging (USD)</label><input id="amt" inputmode="decimal" autocomplete="off" value="500"></div>
+          <div class="field"><label for="cur">Currency</label><select id="cur"></select></div>
+        </div>
+        <div class="result" aria-live="polite">
+          <div><div class="lbl" id="resLbl">You receive</div><div class="big" id="res">—</div></div>
+          <div class="rate" id="rateLine"></div>
+        </div>
+        <div class="bills" id="bills">
+          <div class="bills-head"><span class="lbl" id="billsLbl">Bills you'll receive</span>
+            <div class="mix" role="group" aria-label="Bill mix"><button type="button" class="mixb" data-mix="large" aria-pressed="true">Large bills</button><button type="button" class="mixb" data-mix="small" aria-pressed="false">Small bills</button></div></div>
+          <div class="bill-list" id="billList"></div>
+        </div>
+        <div class="calc-actions">
+          <button class="btn btn-primary" id="reserveBtn" type="button">Reserve and lock this rate</button>
+          <a class="btn btn-ghost" id="callBtn" href="tel:">Call us</a>
+        </div>
+        <p class="fine">Sample rates for this concept. Final rate is confirmed by our team at the counter.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="rates">
+  <div class="wrap">
+    <div class="head rv">
+      <span class="eyebrow">Today's rates</span>
+      <h2>Clear rates, no guessing.</h2>
+      <p>Buy is what you pay per unit. Sell is what you receive per unit. Tap any card to load it into the calculator.</p>
+    </div>
+    <div class="rate-tools rv">
+      <label class="search"><span class="sr" style="position:absolute;left:-999px">Search currency</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="search" type="search" placeholder="Search currency (e.g. Euro, GBP, CAD)…" autocomplete="off">
+      </label>
+      <span class="stamp"><i></i><span id="stampTxt">Sample rates snapshot</span></span>
+      <button class="owner-toggle" id="ownerBtn" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Owner view: edit rates</button>
+    </div>
+    <div class="edit-bar" id="editBar" hidden>
+      <p><b>Owner view.</b> Type a new rate and the calculator, banknote and reservations update instantly. At launch this sits behind a staff login. Edits stay in this browser only.</p>
+      <div class="eb-actions"><button class="btn btn-ghost" id="ebReset" type="button">Reset rates</button><button class="btn btn-primary" id="ebPublish" type="button">Publish to all branches</button></div>
+    </div>
+    <div class="rate-grid" id="rateGrid"></div>
+  </div>
+</section>
+
+<section id="services">
+  <div class="wrap">
+    <div class="head center rv">
+      <span class="eyebrow">Services</span>
+      <h2>More than currency exchange.</h2>
+      <p>Complete business solutions for travelers, families and companies, all in one stop.</p>
+    </div>
+    <div class="svc-grid" id="svcGrid"></div>
+    <div class="extras" id="extras"></div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap">
+    <div class="about">
+      <div class="rv">
+        <span class="eyebrow">About us</span>
+        <h2 style="font-size:clamp(30px,4vw,46px);font-weight:800;margin:14px 0 18px" id="aboutH">Your trusted currency exchange partner.</h2>
+        <p id="aboutP1"></p>
+        <p id="aboutP2"></p>
+      </div>
+      <ul class="why rv" id="why"></ul>
+    </div>
+    <div class="stats rv" id="stats"></div>
+  </div>
+</section>
+
+<section id="visit">
+  <div class="wrap">
+    <div class="head rv">
+      <span class="eyebrow">Visit or contact</span>
+      <h2>Find us. Call us. Or send a note.</h2>
+    </div>
+    <div class="visit">
+      <div class="card rv">
+        <h3>Our office</h3>
+        <div class="rows" id="rows"></div>
+        <div class="map"><div class="map-ph" id="mapFrame" role="img" aria-label="Map placeholder"><span>Map of your office goes here</span></div></div>
+      </div>
+      <div class="card rv">
+        <h3>Send us a message</h3>
+        <form class="form" id="msgForm" novalidate>
+          <div class="two">
+            <div class="field"><label for="mName">Your name</label><input id="mName" required autocomplete="name"></div>
+            <div class="field"><label for="mEmail">Email</label><input id="mEmail" type="email" required autocomplete="email"></div>
+          </div>
+          <div class="field"><label for="mMsg">Message</label><textarea id="mMsg" required placeholder="Which currency, how much, and when do you travel?"></textarea></div>
+          <button class="btn btn-primary" type="submit">Send message</button>
+          <p class="fine">Concept preview: messages are not sent from this demo. At launch this connects to <span data-site="email">hello@example.com</span>.</p>
+        </form>
+        <div class="okbox" id="msgOk"><b>Message received</b><span>We'll get back to you quickly. (Demo confirmation.)</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="owner" class="owner">
+  <div class="wrap">
+    <div class="head rv">
+      <span class="eyebrow">For the owner</span>
+      <h2>Built to fill your counter and save you time.</h2>
+      <p>This section is only in the sales demo. Every feature below works on this page, so try them.</p>
+    </div>
+    <div class="own-grid">
+      <article class="own rv"><h3>Update rates in seconds</h3><p>Change a rate in one table and the calculator, the banknote and every reservation follow. No web designer, no waiting.</p><button class="btn btn-ghost" type="button" data-act="edit">Try the rate editor</button></article>
+      <article class="own rv"><h3>Turn browsers into walk-ins</h3><p>Customers lock today's rate for 2 hours and get a ticket to show at the counter. You see who is coming and for how much.</p><button class="btn btn-ghost" type="button" data-act="reserve">Reserve a rate</button></article>
+      <article class="own rv"><h3>Faster pickups</h3><p>The customer sees exactly which bills they will get, large or small. Your team gets a ready order slip instead of doing the math at the counter.</p><button class="btn btn-ghost" type="button" data-act="bills">See the bill mix</button></article>
+      <article class="own rv"><h3>One template, every branch</h3><p>Each branch gets its own address, phone and pin on the globe. Adding a branch is a new entry, not a new website.</p><button class="btn btn-ghost" type="button" data-act="branch">Switch branch</button></article>
+    </div>
+    <div class="launch rv">
+      <h3>What we connect at launch</h3>
+      <ul>
+        <li>Reservations sent to your phone and email</li>
+        <li>Your logo, colors, photos and real address</li>
+        <li>A staff login for the rate editor</li>
+        <li>Rates from your own source or one staff screen</li>
+        <li>Search-friendly pages on fast hosting</li>
+        <li>Your other branches, added from the same template</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<footer>
+  <div class="wrap foot">
+    <div>© <span id="yr"></span> Meridian Exchange. Fictional business for demonstration.<br><span style="font-size:12.5px">Sample website by <span data-site="studio">Studio</span></span></div>
+    <div class="social" id="social"></div>
+  </div>
+</footer>
+
+<dialog id="dlg" aria-labelledby="dlgT">
+  <div class="dlg">
+    <button class="x" id="dlgX" type="button" aria-label="Close">×</button>
+    <div id="dlgForm">
+      <h3 id="dlgT">Reserve your exchange</h3>
+      <p class="fine" style="margin:0">Tell us when you'll stop by and we'll confirm by phone.</p>
+      <div class="sum"><div><small>Your exchange</small><b id="sumA">—</b></div><div style="text-align:right"><small>Sample rate</small><b id="sumR">—</b></div></div>
+      <p class="lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Reserve now and we hold this rate for <b>2 hours</b>, even if the board changes.</span></p>
+      <form class="form" id="resForm" novalidate>
+        <div class="two">
+          <div class="field"><label for="rName">Your name</label><input id="rName" required autocomplete="name"></div>
+          <div class="field"><label for="rPhone">Mobile phone</label><input id="rPhone" type="tel" required autocomplete="tel" inputmode="tel"></div>
+        </div>
+        <div class="two">
+          <div class="field"><label for="rDay">Preferred day</label><select id="rDay"></select></div>
+          <div class="field"><label for="rTime">Time of day</label><select id="rTime"><option>Morning</option><option>Midday</option><option>Afternoon</option><option>No preference</option></select></div>
+        </div>
+        <div class="field" id="locField" hidden><label for="rLoc">Location</label><select id="rLoc"></select></div>
+        <button class="btn btn-primary" type="submit">Request reservation</button>
+        <p class="fine">Concept preview: this form doesn't send anything yet. At launch it connects to <span data-site="email">your inbox</span> or booking tool.</p>
+      </form>
+    </div>
+    <div class="success" id="dlgOk">
+      <div class="tick"><svg width="30" height="30" viewBox="0 0 20 20" fill="none"><path d="M4.5 10.5l3.5 3.5 7.5-8" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <h3>Rate locked. See you soon.</h3>
+      <p style="color:var(--ink-2)" id="okMsg"></p>
+      <div class="ticket" id="ticket">
+        <div class="tk-main">
+          <div class="tk-route">
+            <div><small>From</small><b id="tkFrom">BAY</b><span id="tkFromN">Bayview</span></div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h16m-6-6 6 6-6 6"/></svg>
+            <div style="text-align:right"><small>You get</small><b id="tkTo">EUR</b><span id="tkToN">Euro</span></div>
+          </div>
+          <dl class="tk-grid">
+            <div><dt>You pay</dt><dd id="tkPay"></dd></div>
+            <div><dt>You receive</dt><dd id="tkGet"></dd></div>
+            <div><dt>Locked rate</dt><dd id="tkRate"></dd></div>
+            <div><dt>Pickup</dt><dd id="tkWhen"></dd></div>
+          </dl>
+          <div class="tk-bills"><dt>Order slip</dt><span id="tkBills"></span></div>
+        </div>
+        <div class="tk-stub">
+          <div><small>Rate held <span id="tkHeld"></span></small><b id="tkLeft">2:00:00</b></div>
+          <div class="barcode" id="barcode"></div>
+          <div class="code" id="okCode">MRX-0000</div>
+        </div>
+      </div>
+      <p class="fine">Demo ticket. Nothing was sent.</p>
+      <div class="calc-actions" style="justify-content:center"><a class="btn btn-ghost" id="okCall" href="tel:">Call to confirm</a><button class="btn btn-primary" id="okClose" type="button">Done</button></div>
+    </div>
+  </div>
+</dialog>
+
+<script>
+(function(){
+'use strict';
+
+/* =====================================================================
+   SITE CONFIG — change this block to spin up another location / brand.
+   Colors live in the CSS tokens at the top of the file.
+   ===================================================================== */
+const SITE = {
+  studio: 'Lighthouse Digital Productions',
+  tagline: 'Foreign Currency',
+  email: 'hello@example.com',
+  social: { facebook: '#', instagram: '#' },
+  // First location is primary. Add more objects for more branches.
+  locations: [
+    { name:'Bayview', state:'CA', short:'BAY', office:'Meridian Exchange', street:'100 Example Avenue, Suite 1', city:'Bayview, CA 00000',
+      directions:['Ground-floor office','Free parking out front','Sample address for this demo'], phone:'(555) 010-0100', mobile:'(555) 010-0101', lat:37.693, lng:-121.896 },
+    { name:'Riverton', state:'TX', short:'RVT', office:'Meridian Exchange', street:'200 Sample Boulevard, Unit 4', city:'Riverton, TX 00000',
+      directions:['Inside the Plaza building','Entrance faces the parking lot','Sample address for this demo'], phone:'(555) 010-0200', mobile:'(555) 010-0201', lat:32.78, lng:-96.80 },
+    { name:'Harborpoint', state:'FL', short:'HBP', office:'Meridian Exchange', street:'300 Demo Street, Suite 12', city:'Harborpoint, FL 00000',
+      directions:['Two blocks from the waterfront','Metered street parking','Sample address for this demo'], phone:'(555) 010-0300', mobile:'(555) 010-0301', lat:25.77, lng:-80.19 }
+  ],
+  founded: 2012,
+  currencyCount: '50+',
+  // Rate snapshot taken from the current website. Units: USD per 1 unit of foreign currency.
+  rateStamp: 'Sample rates for this demo',
+  currencies: [
+    {code:'EUR', name:'Euro',               sym:'€',   buy:1.187984, sell:1.064703, city:'Paris',     lat:48.86,  lng:2.35,   c:['#1E4FA3','#6E9BE6']},
+    {code:'GBP', name:'British Pound',      sym:'£',   buy:1.406344, sell:1.260403, city:'London',    lat:51.51,  lng:-0.13,  c:['#5B2F86','#A67AD6']},
+    {code:'CAD', name:'Canadian Dollar',    sym:'C$',  buy:0.739064, sell:0.661638, city:'Toronto',   lat:43.65,  lng:-79.38, c:['#B3282A','#EE7A62']},
+    {code:'MXN', name:'Mexican Peso',       sym:'MX$', buy:0.058144, sell:0.051080, city:'Mexico City',lat:19.43, lng:-99.13, c:['#1E7A4B','#6FBF8F']},
+    {code:'JPY', name:'Japanese Yen',       sym:'¥',   buy:0.006762, sell:0.005941, city:'Tokyo',     lat:35.68,  lng:139.69, c:['#8E3B2E','#E0A06C']},
+    {code:'AUD', name:'Australian Dollar',  sym:'A$',  buy:0.749193, sell:0.651167, city:'Sydney',    lat:-33.87, lng:151.21, c:['#B9791A','#F0C65A']},
+    {code:'NZD', name:'New Zealand Dollar', sym:'NZ$', buy:0.607252, sell:0.517288, city:'Auckland',  lat:-36.85, lng:174.76, c:['#177C80','#6CCBC8']},
+    {code:'CHF', name:'Swiss Franc',        sym:'CHF', buy:1.297642, sell:1.105398, city:'Zurich',    lat:47.37,  lng:8.54,   c:['#7B1F2C','#D5505F']}
+  ],
+  services: [
+    { title:'Express Shipping', icon:'box', blurb:'Fast, reliable shipping for packages and documents worldwide.', cta:'Learn more',
+      points:['Express worldwide delivery','Real-time tracking','Customs clearance support','Insurance coverage','Multiple service options','Dedicated customer support'] },
+    { title:'Fingerprint Services', icon:'finger', blurb:'Professional fingerprinting for employment, licensing and immigration.', cta:'Learn more',
+      points:['Background checks','Employment verification','Immigration services','Professional licensing','Adoption services','Same-day processing'] },
+    { title:'Travel Insurance', icon:'shield', blurb:'Protection plans for peace of mind on international trips.', cta:'Get a quote',
+      points:['Medical coverage abroad','Trip cancellation protection','Baggage loss coverage','Emergency assistance','24/7 global support','Flexible plan options'] }
+  ],
+  extras: [
+    {t:'Money Transfer', d:'Fast, secure international transfers at competitive rates.'},
+    {t:'Travel Documents', d:'Help with visa applications, passport services and travel paperwork.'},
+    {t:'Business Solutions', d:'Corporate foreign exchange and international payment solutions.'},
+    {t:'Currency Cards', d:'Pre-loaded currency cards for safe, convenient travel spending.'}
+  ],
+  why: [
+    ['Competitive rates','Some of the best exchange rates in the market, with transparent pricing.'],
+    ['No hidden fees','Transparent pricing with no surprise charges.'],
+    ['Expert guidance','Professional advice from an experienced team.'],
+    ['Secure transactions','Careful, secure handling of every transaction.']
+  ]
+};
+/* ===================================================================== */
+
+const $ = (s,el=document)=>el.querySelector(s);
+const $$ = (s,el=document)=>[...el.querySelectorAll(s)];
+const theme = document.documentElement.dataset.skin;
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fmt = (n,d=2)=>n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+let loc0 = SITE.locations[0], LI = 0;
+const byCode = Object.fromEntries(SITE.currencies.map(c=>[c.code,c]));
+const RKEY = 'meridian-rates-v1';
+const DEF_RATES = Object.fromEntries(SITE.currencies.map(c=>[c.code,{buy:c.buy,sell:c.sell}]));
+try{ const j = JSON.parse(localStorage.getItem(RKEY)||'null'); if(j) for(const k in j){ if(byCode[k] && j[k].buy>0 && j[k].sell>0){ byCode[k].buy=j[k].buy; byCode[k].sell=j[k].sell; } } }catch(e){}
+function saveRates(){ try{ localStorage.setItem(RKEY, JSON.stringify(Object.fromEntries(SITE.currencies.map(c=>[c.code,{buy:c.buy,sell:c.sell}])))); }catch(e){} }
+let toastT=null;
+function toast(msg){ const el=$('#toast'); el.textContent=msg; el.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('on'),3200); }
+const clock = d=>d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+
+/* ---------- static text from config ---------- */
+$$('[data-site="studio"]').forEach(e=>e.textContent=SITE.studio);
+$$('[data-site="tagline"]').forEach(e=>e.textContent=SITE.tagline);
+$$('[data-site="eyebrow"]').forEach(e=>e.textContent=SITE.tagline+' · '+loc0.name+', '+loc0.state);
+$$('[data-site="city"]').forEach(e=>e.textContent=loc0.name);
+$$('[data-site="email"]').forEach(e=>e.textContent=SITE.email);
+$('#yr').textContent = new Date().getFullYear();
+$('#conceptX').onclick = ()=>$('#concept').remove();
+$('#callBtn').href = 'tel:'+loc0.phone.replace(/[^\d+]/g,'');
+$('#callBtn').textContent = 'Call '+loc0.phone;
+$('#okCall').href = $('#callBtn').href;
+$('#stampTxt').textContent = SITE.rateStamp;
+
+/* ---------- flags (inline SVG, no external files) ---------- */
+let uid = 0;
+function star(cx,cy,R,r,n){ let d=''; for(let i=0;i<n*2;i++){ const a=-Math.PI/2+i*Math.PI/n, rr=i%2?r:R; d+=(i?'L':'M')+(cx+rr*Math.cos(a)).toFixed(2)+' '+(cy+rr*Math.sin(a)).toFixed(2);} return d+'Z'; }
+function jack(id,tf){return `<g transform="${tf}"><clipPath id="a${id}"><path d="M0,0 v30 h60 v-30 z"/></clipPath><clipPath id="b${id}"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath><g clip-path="url(#a${id})"><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#b${id})" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></g></g>`}
+function flag(code){
+  const id = ++uid; let inner='';
+  switch(code){
+    case 'EUR': inner='<rect width="60" height="40" fill="#003399"/>'+Array.from({length:12},(_,i)=>{const a=i*Math.PI/6;return `<circle cx="${(30+12*Math.sin(a)).toFixed(2)}" cy="${(20-12*Math.cos(a)).toFixed(2)}" r="1.9" fill="#FFCC00"/>`}).join(''); break;
+    case 'GBP': inner=jack(id,'scale(1 1.3333)'); break;
+    case 'CAD': inner='<rect width="60" height="40" fill="#fff"/><rect width="15" height="40" fill="#D52B1E"/><rect x="45" width="15" height="40" fill="#D52B1E"/><path transform="translate(19.5 9.5) scale(1.05)" d="M10 0l2 4 2.5-1-1 5 3.5-1.5-1 3.5 3-.5-5 4.5 1 2-4.2-1v4h-1.6v-4l-4.2 1 1-2-5-4.5 3 .5-1-3.5 3.5 1.5-1-5 2.5 1z" fill="#D52B1E"/>'; break;
+    case 'MXN': inner='<rect width="20" height="40" fill="#006847"/><rect x="20" width="20" height="40" fill="#fff"/><rect x="40" width="20" height="40" fill="#CE1126"/><circle cx="30" cy="20" r="5" fill="#B08D57"/><circle cx="30" cy="20" r="2.6" fill="#5E8C4A"/>'; break;
+    case 'JPY': inner='<rect width="60" height="40" fill="#fff"/><circle cx="30" cy="20" r="11.5" fill="#BC002D"/>'; break;
+    case 'AUD': inner='<rect width="60" height="40" fill="#012169"/>'+jack(id,'scale(.5 .6667)')+`<path d="${star(15,30,6,2.6,7)}" fill="#fff"/><path d="${star(45,7,3.4,1.5,7)}" fill="#fff"/><path d="${star(37,17,3,1.3,7)}" fill="#fff"/><path d="${star(53,15,3,1.3,7)}" fill="#fff"/><path d="${star(45,33,3.4,1.5,7)}" fill="#fff"/><path d="${star(49,23,1.8,.8,5)}" fill="#fff"/>`; break;
+    case 'NZD': inner='<rect width="60" height="40" fill="#012169"/>'+jack(id,'scale(.5 .6667)')+[[45,9],[37,18],[53,16],[45,32]].map(p=>`<path d="${star(p[0],p[1],3.3,1.4,5)}" fill="#CC142B" stroke="#fff" stroke-width=".8"/>`).join(''); break;
+    case 'CHF': inner='<rect width="60" height="40" fill="#D52B1E"/><rect x="26" y="8" width="8" height="24" fill="#fff"/><rect x="18" y="16" width="24" height="8" fill="#fff"/>'; break;
+    default: inner='<rect width="60" height="40" fill="#8A99B8"/>';
+  }
+  return `<svg viewBox="0 0 60 40" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${inner}</svg>`;
+}
+
+/* ---------- icons ---------- */
+const ICONS = {
+  box:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5V8z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg>',
+  finger:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 11a6 6 0 0 1 12 0v2M9 20c-1-2-1.4-4-1.4-6.4a4.4 4.4 0 0 1 8.8 0c0 2.4.4 4 1.6 6M12 20c-.7-2-.9-3.6-.9-6"/></svg>',
+  shield:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4.5 6v6c0 4.4 3.2 7.6 7.5 9 4.3-1.4 7.5-4.6 7.5-9V6L12 3z"/><path d="m9 12 2.2 2.2L15.5 10"/></svg>',
+  pin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.6"/></svg>',
+  compass:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5 5-2z"/></svg>',
+  phone:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>',
+  mail:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>',
+  building:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V5l8-2v18M12 21V9l8 2v10M3 21h18M7.5 8h1M7.5 12h1M7.5 16h1M15.5 14h1M15.5 18h1"/></svg>',
+  fb:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7.5H16l.5-3h-3V8.6c0-.9.3-1.5 1.6-1.5h1.5V4.4c-.3 0-1.2-.1-2.2-.1-2.3 0-3.9 1.4-3.9 4v2.2H8v3h2.5V21h3z"/></svg>',
+  ig:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".6" fill="currentColor"/></svg>'
+};
+
+/* ---------- calculator state ---------- */
+const S = { code:'EUR', mode:'buy', amount:500, mix:'large', edit:false };
+const cur = ()=>byCode[S.code];
+const niceRound = v => { if(v<=0) return 0; const p = Math.pow(10, Math.floor(Math.log10(v))-1); return Math.round(v/p)*p; };
+const decimals = c => c.code==='JPY' ? 0 : 2;
+
+function compute(){
+  const c = cur(); const a = Math.max(0, +S.amount || 0);
+  if(S.mode==='buy'){ return { out: a / c.buy, outCode: c.code, unit: c.code, rateTxt: `1 ${c.code} = $${c.buy.toFixed(6)}`, perUsd: 1 / c.buy }; }
+  return { out: a * c.sell, outCode:'USD', unit:'USD', rateTxt: `1 ${c.code} = $${c.sell.toFixed(6)}`, perUsd: 1 / c.sell };
+}
+function renderCalc(){
+  const c = cur(), r = compute();
+  $('#amtLbl').textContent = S.mode==='buy' ? "I'm exchanging (USD)" : `I'm selling (${c.code})`;
+  $('#resLbl').textContent = S.mode==='buy' ? `You receive (${c.code})` : 'You receive (USD)';
+  $('#res').textContent = S.mode==='buy' ? `${c.sym==='CHF'?'':c.sym}${c.sym==='CHF'?'CHF ':''}${fmt(r.out,decimals(c))}` : `$${fmt(r.out,2)}`;
+  $('#rateLine').innerHTML = `${r.rateTxt}<br>${fmt(r.perUsd, c.code==='JPY'?2:4)} ${c.code} per $1`;
+  $('#cur').value = S.code;
+  $$('.chip').forEach(b=>b.setAttribute('aria-pressed', String(b.dataset.code===S.code)));
+  $('#tabBuy').setAttribute('aria-selected', String(S.mode==='buy'));
+  $('#tabSell').setAttribute('aria-selected', String(S.mode==='sell'));
+  renderBills(r);
+  drawNote(r);
+}
+
+
+/* ---------- bill breakdown ---------- */
+const DENOM = {EUR:[200,100,50,20,10,5], GBP:[50,20,10,5], CAD:[100,50,20,10,5], MXN:[1000,500,200,100,50,20], JPY:[10000,5000,1000], AUD:[100,50,20,10,5], NZD:[100,50,20,10,5], CHF:[200,100,50,20,10], USD:[100,50,20,10,5,1]};
+function billInfo(r){
+  const c = cur(), buy = S.mode==='buy';
+  const code = buy ? c.code : 'USD';
+  const sym = buy ? (c.sym==='CHF'?'CHF ':c.sym) : '$';
+  let d = (DENOM[code]||[100,50,20,10]).slice();
+  if(S.mix==='small') d = d.slice(Math.max(1,d.length-4));
+  const whole = Math.floor(r.out + 1e-9); let rest = whole; const out=[];
+  for(const v of d){ const n=Math.floor(rest/v); if(n>0){ out.push([v,n]); rest-=n*v; } }
+  const change = rest + (r.out - whole);
+  const col = buy ? c.c : ['#2F6B4F','#7DB896'];
+  return {code, sym, out, change, col, dp: code==='JPY'?0:2};
+}
+function renderBills(r){
+  const b = billInfo(r), list = $('#billList'); if(!list) return;
+  $$('.mixb').forEach(x=>x.setAttribute('aria-pressed', String(x.dataset.mix===S.mix)));
+  $('#billsLbl').textContent = S.mode==='buy' ? "Bills you'll receive" : "Bills you'll receive (USD)";
+  if(!b.out.length){ list.innerHTML = `<span class="bill-note">Under one bill. Paid as ${b.sym}${fmt(b.change,b.dp)} in coins.</span>`; return; }
+  list.innerHTML = b.out.map((o,i)=>`<span class="bill" style="--b1:${b.col[0]};--b2:${b.col[1]}"><i>${b.sym}${o[0].toLocaleString('en-US')}</i><b>× ${o[1]}</b></span>`).join('') +
+    (b.change>=0.005 ? `<span class="bill-note">+ ${b.sym}${fmt(b.change,b.dp)} in coins</span>` : '');
+}
+function billText(r){
+  const b = billInfo(r);
+  const s = b.out.map(o=>`${o[1]} × ${b.sym}${o[0].toLocaleString('en-US')}`).join(' · ');
+  return (s || 'Coins only') + (b.change>=0.005 ? ` · ${b.sym}${fmt(b.change,b.dp)} coins` : '');
+}
+$$('.mixb').forEach(x=>x.addEventListener('click',()=>{ userTouched(); S.mix=x.dataset.mix; renderCalc(); }));
+
+/* ---------- chips, select, tabs ---------- */
+SITE.currencies.forEach(c=>{
+  const b = document.createElement('button'); b.type='button'; b.className='chip'; b.dataset.code=c.code; b.setAttribute('aria-pressed','false');
+  b.innerHTML = `<span class="flag">${flag(c.code)}</span>${c.code}`;
+  b.addEventListener('click',()=>{ userTouched(); select(c.code); });
+  $('#chips').appendChild(b);
+  const o = document.createElement('option'); o.value=c.code; o.textContent=`${c.name} (${c.code})`; $('#cur').appendChild(o);
+});
+$('#cur').addEventListener('change',e=>{ userTouched(); select(e.target.value); });
+$('#amt').addEventListener('input',e=>{ userTouched(); S.amount = parseFloat(e.target.value.replace(/[^\d.]/g,'')) || 0; renderCalc(); });
+$('#amt').addEventListener('focus',userTouched);
+function setMode(m){
+  userTouched();
+  if(m===S.mode) return; S.mode=m;
+  const c = cur();
+  S.amount = m==='buy' ? 500 : niceRound(500 / c.sell);
+  $('#amt').value = String(S.amount); renderCalc();
+}
+$('#tabBuy').onclick = ()=>setMode('buy');
+$('#tabSell').onclick = ()=>setMode('sell');
+
+function select(code, opts){
+  const changed = code!==S.code;
+  S.code = code;
+  if(S.mode==='sell' && changed){ S.amount = niceRound(500 / cur().sell); $('#amt').value = String(S.amount); }
+  renderCalc();
+  globeSelect(code, opts);
+}
+
+/* ---------- banknote (CSS 3D, live amount) ---------- */
+function guilloche(){
+  let p='';
+  for(let i=0;i<16;i++){ let d=''; for(let x=0;x<=340;x+=6){ const y=10+i*10+Math.sin(x/22+i*.7)*7; d+=(x?'L':'M')+x+' '+y.toFixed(1);} p+=`<path d="${d}" fill="none" stroke="#fff" stroke-width=".9" opacity=".55"/>`; }
+  for(let r=18;r<=120;r+=9) p+=`<circle cx="270" cy="84" r="${r}" fill="none" stroke="#fff" stroke-width=".8" opacity=".4"/>`;
+  return `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 162">${p}</svg>`)}")`;
+}
+const GUIL = guilloche();
+$('#noteFront').style.setProperty('--guil',GUIL);
+document.querySelector('.note-back').style.setProperty('--guil',GUIL);
+function drawNote(r){
+  const c = cur();
+  const f = $('#noteFront'); f.style.setProperty('--c1',c.c[0]); f.style.setProperty('--c2',c.c[1]);
+  const back = document.querySelector('.note-back'); back.style.setProperty('--c1',c.c[0]); back.style.setProperty('--c2',c.c[1]);
+  $('#nFlag').innerHTML = flag(c.code);
+  $('#nCode').textContent = S.mode==='buy' ? c.code : 'USD';
+  $('#nName').textContent = S.mode==='buy' ? c.name : 'US Dollar';
+  const sym = S.mode==='buy' ? c.sym : '$';
+  const txt = S.mode==='buy' ? fmt(r.out,decimals(c)) : fmt(r.out,2);
+  $('#nAmt').querySelector('.sym').textContent = sym;
+  $('#nVal').textContent = txt;
+  const nw = $('#note').clientWidth || 340;
+  const len = (sym+txt).length + 1;
+  $('#nAmt').style.fontSize = Math.max(22, Math.min(46, (nw-(nw<280?28:40)) / (len*0.62))) + 'px';
+}
+
+/* =====================================================================
+   3D GLOBE — canvas 2D with real sphere math (no external libraries)
+   ===================================================================== */
+const gc = $('#globe'), g = gc.getContext('2d');
+let DPR=1, W=0, H=0, GX=0, GY=0, GR=100;
+
+/* Coarse continent outlines [lat,lng]. Rasterised into a dot grid at load. */
+const LAND = [
+ // North America
+ [[71.3,-156.7],[70.2,-148.5],[69.7,-141],[69.4,-134],[68.8,-128],[69.4,-123],[68.3,-115.5],[67.8,-108.5],[68.3,-100.5],[68.5,-98],[69.5,-93],[68,-89],[66.5,-86],[64,-87.5],[62.5,-92],[60,-94.2],[57.2,-92.5],[55.2,-85],[55.2,-82.2],[52.8,-82.2],[51.3,-80.2],[52.8,-78.8],[55,-76.8],[58,-77.5],[60.5,-78.2],[62.3,-77.5],[62.4,-72],[61,-69.5],[58.6,-68.3],[60.2,-64.8],[58,-62.5],[55.5,-59.5],[53.5,-56],[51.4,-56.8],[50.2,-60.5],[50,-66.5],[48.6,-68.8],[48.9,-64.2],[47,-64.8],[45.6,-61],[43.6,-65.7],[44.8,-66.9],[43.7,-69.8],[42.6,-70.7],[41.8,-70],[41.4,-71.5],[40.6,-74],[39,-74.9],[38,-75.2],[36.9,-76],[35.2,-75.5],[34.5,-77.2],[33.4,-78.5],[32.1,-80.8],[30.5,-81.4],[28.4,-80.6],[26.8,-80],[25.2,-80.3],[25.2,-81.1],[26.6,-82],[28,-82.8],[29.8,-83.7],[30.1,-85.5],[30.3,-87.5],[30.2,-88.8],[29,-89.4],[29.6,-90.5],[29.5,-92.5],[29.6,-94],[28.5,-96.2],[26.8,-97.3],[24.5,-97.7],[22.5,-97.8],[20.5,-97],[19,-96.2],[18.2,-94.5],[18.6,-92.5],[19.8,-90.6],[21.2,-90.3],[21.5,-87.2],[20,-87.3],[18.4,-87.8],[17.5,-88.3],[15.8,-88.5],[15.9,-86.5],[15.8,-84.3],[14,-83.3],[12.5,-83.7],[11,-83.7],[10,-83],[9.2,-81.5],[8.8,-79.8],[9.4,-79.1],[9.2,-77.8],[8.5,-77.4],[8,-77.5],[7.3,-80.4],[8.2,-82.8],[9,-83.6],[9.7,-85.2],[11,-85.7],[12.3,-87.2],[13.3,-88.5],[13.8,-90],[14.5,-92.3],[15.8,-94.2],[16.2,-95.5],[16.5,-98.5],[17.5,-101],[18.3,-103.5],[19.5,-105.2],[21,-105.5],[23,-106.4],[25,-108.8],[26.8,-109.9],[28.5,-111],[30.5,-112.8],[31.7,-114.5],[29,-113.2],[27,-111.8],[25,-110.5],[23.2,-109.4],[22.9,-110],[24,-111.8],[24.5,-112.1],[26,-113.4],[27.5,-114.8],[29.5,-115.6],[31,-116.5],[32.5,-117.1],[34,-118.5],[34.5,-120.5],[36,-121.5],[37.5,-122.5],[38.5,-123.5],[40.3,-124.4],[42,-124.4],[44,-124.1],[46.2,-124],[47.5,-124.5],[48.4,-124.7],[49.3,-124],[50.5,-127.5],[52.5,-128.5],[54.5,-130.5],[55.5,-131.5],[57,-133.5],[58.4,-135.5],[59,-137.5],[59.8,-141],[60,-144.5],[60.8,-146.5],[60.5,-148.5],[59.4,-151.5],[58.8,-153.5],[57.5,-156.5],[55.8,-160.5],[55,-163.2],[56.5,-161.5],[57.5,-158.8],[58.7,-157.5],[58.7,-160.5],[60,-162.5],[60.7,-165.5],[62.5,-165],[63.7,-161],[64.5,-161.5],[64.5,-165],[65.5,-168],[66.2,-162],[67.5,-164],[68.5,-166.5],[69.5,-163],[70.5,-160]],
+ // South America
+ [[8.5,-77.4],[9.4,-75.7],[10.5,-75.5],[11.3,-74],[12.4,-71.5],[11,-71.5],[10.6,-68],[10.7,-66],[10.5,-62],[8.6,-62.2],[7,-58.5],[5.8,-55],[5.8,-53],[4.2,-51.6],[1.5,-50],[0,-50],[-0.7,-47],[-1.5,-44.8],[-2.5,-41.5],[-3.7,-38.5],[-5.2,-35.3],[-8,-34.8],[-12.9,-38.5],[-15.9,-38.9],[-18.5,-39.7],[-21.5,-40.9],[-23,-43.2],[-25,-47],[-26.9,-48.6],[-29,-49.7],[-32,-52.1],[-34.8,-56],[-36,-57],[-38.9,-62],[-41.2,-63.2],[-43.3,-65.2],[-46,-67.5],[-48.5,-66],[-50,-68.5],[-52.3,-68.4],[-53.5,-68],[-55,-66.5],[-55.5,-68],[-54.5,-71.5],[-52.5,-74.5],[-50,-75.5],[-46,-75.7],[-42.5,-73.8],[-40,-73.7],[-37,-73.4],[-33,-71.7],[-30,-71.4],[-27,-70.9],[-23.5,-70.5],[-20,-70.2],[-18.4,-70.3],[-15.5,-75],[-13,-76.3],[-12,-77.2],[-8.5,-79.2],[-6,-81],[-4.5,-81.3],[-2.2,-80.9],[1,-79.5],[4,-77.4],[7,-77.8]],
+ // Africa
+ [[35.8,-5.9],[35.1,-2.9],[36.5,1],[36.8,3],[37,7],[37.2,9.8],[36.8,10.3],[35,11],[33.9,10.1],[32.9,13.2],[32.2,15.2],[31.2,16.5],[30.3,19.5],[32.8,21.9],[32.1,24.9],[31.4,27.5],[31.2,29.9],[31.4,32],[31.1,32.6],[29.9,32.5],[27.5,33.7],[24,35.5],[22,36.9],[19.5,37.2],[15.7,39.5],[13,42.2],[11.7,43.2],[10.4,44.5],[11.3,48],[11.9,51.2],[10.5,51.3],[8,50.8],[5,48],[2,45.5],[-1.7,41.5],[-4,39.7],[-6.5,39.4],[-10,40.4],[-15,40.7],[-17.9,37],[-20.2,35],[-23.8,35.5],[-25.5,33],[-26.8,32.9],[-28.5,32.4],[-30.5,30.5],[-32.5,28],[-34,25.7],[-34.8,20],[-34.2,18.5],[-32,18],[-28.6,16.5],[-25,14.8],[-22.5,14.4],[-19,12.5],[-17,11.8],[-12.5,13.7],[-8.8,13.2],[-5.9,12.2],[-4.5,11.8],[-1,9],[0.4,9.3],[3.8,9.6],[4.3,6.2],[6.4,3.4],[6,1.2],[5.5,-0.2],[5.1,-2.2],[4.5,-7.5],[6.4,-10.8],[8.5,-13.2],[10.5,-15],[12.5,-16.7],[14.7,-17.5],[16.5,-16.4],[19,-16.2],[21,-17],[23,-16],[26,-14.8],[28.5,-12],[30,-9.7],[32,-9.3],[33.6,-7.6],[35,-6.7]],
+ // Eurasia (incl. Arabia, India, SE Asia, Korea, Kamchatka)
+ [[37,-9],[39,-9.5],[41.5,-8.9],[43.1,-9.3],[43.5,-5.8],[43.4,-1.8],[46.2,-1.2],[47.3,-2.5],[48.5,-4.7],[48.7,-2],[49.7,-1.6],[49.3,0.2],[50.7,1.6],[51.4,3.4],[53,4.7],[53.6,6.5],[53.8,8.8],[55,8.6],[57.1,8.6],[57.7,10.5],[56.2,10.3],[55,9.8],[54.4,10.8],[54.2,12.5],[54.4,15.5],[54.8,18.3],[54.4,19.6],[55.3,21.1],[57,21],[57.5,22.6],[58.4,21.9],[59,23.5],[59.5,25.5],[59.5,28],[60,29.5],[60.3,26],[60,23],[61.5,21.4],[63,21.3],[65,25.3],[65.8,24.2],[64,21],[62.5,17.4],[60.6,17.4],[59.3,18.6],[58,16.6],[56.2,16.2],[55.4,14.2],[55.5,13],[56.2,12.6],[57.7,11.9],[58.9,11.2],[59,9.5],[58.1,6.6],[59,5.5],[60.6,4.9],[62,5.2],[63.5,8.5],[65,11],[67,13.5],[68.6,15],[69.8,19],[70.6,23.5],[71.1,27.5],[70.4,31],[69.6,33],[69.1,36.5],[68.2,39],[67.1,41],[66.2,40],[66.3,36],[65,34.8],[64,37.5],[64.8,40.5],[66,42],[66.6,44],[68.4,44],[68.8,46],[67.5,50],[68.6,54],[68.4,59],[69,62],[68.6,66.5],[70,67],[71,69],[72.8,70.5],[71.3,72.8],[72.4,74.5],[73.8,80.5],[75.2,87],[76.2,95],[77.7,104],[76,112.5],[73.9,113.5],[73.2,119.5],[72.5,126.5],[71.8,131],[71.6,139],[70.5,150],[69.4,160],[69.7,168.5],[67.5,175],[66,180],[66.1,190.3],[65.5,188],[64.2,186.5],[64.7,177.5],[62.5,179.8],[61,172],[60,170],[59.6,164],[57.8,163.2],[56,162],[54,160],[51.1,156.8],[52.8,158.5],[55,155.8],[57.8,156.2],[59.4,154.5],[59.5,150],[59.3,143],[57,138],[54.5,136.8],[53.5,140.5],[52,141.2],[49,140.4],[46.5,138],[43.5,135.5],[42.8,132.8],[42.3,130.9],[40.5,129.8],[38.5,128.4],[36,129.5],[34.7,128.5],[34.5,126.4],[36.5,126.4],[37.8,126.5],[38.8,125.2],[39.7,124.2],[39,121.7],[40.8,122.2],[40.2,119.5],[39,117.8],[37.6,118.9],[37.4,122.4],[36.2,120.8],[35,119.3],[33,120.8],[31.7,121.9],[30.3,122.1],[28.5,121.5],[26.5,120.2],[25,119.3],[23.5,117],[22.5,114.2],[21.6,111.5],[21.5,110.3],[21.6,108],[20.5,106.8],[18.5,105.7],[16.2,108],[13.5,109.2],[11,108.8],[10.4,107.2],[9,105.4],[10.3,104.6],[11.5,103],[12.7,101.2],[13.4,100],[11,99.5],[9.2,99.9],[8.5,100.2],[6.9,101.3],[6.2,102.2],[4.5,103.4],[2.5,104.2],[1.4,104.1],[1.4,103.5],[2.5,101.8],[4.5,100.6],[6,100.3],[7.5,98.4],[9.5,98.5],[12,98.6],[14.5,98.1],[16.5,97.6],[15.9,95.2],[17,94.5],[19.5,93.5],[21.5,92.2],[22.8,91.2],[22,89.5],[21.7,88.3],[20.2,86.8],[19,84.8],[16.5,82.3],[15,80.2],[13,80.3],[11,79.8],[9,78.2],[8.1,77.5],[9.5,76.2],[11.5,75.5],[14.5,74.2],[17,73.3],[19.5,72.8],[20.7,70.9],[22.3,69],[23,68.5],[24,67.5],[25,66.7],[25.3,62.5],[25.4,60],[26.2,57],[27,56.2],[27.2,54],[28,51.5],[29.5,50.4],[30.2,48.8],[29.5,48.2],[28,48.8],[26,50.2],[25.3,51.5],[24.5,51.6],[24,53.5],[24.3,54.8],[26.2,56.3],[24.5,56.7],[23.5,58.6],[22.5,59.8],[20.5,58.8],[18.9,57.8],[17.3,56],[16.2,53.5],[15,51],[14.2,48.5],[13,45],[12.7,43.5],[14.5,42.8],[16.5,42.5],[19.5,40.5],[21.5,39.2],[24.2,37.7],[26.5,35.5],[28,34.8],[29.5,34.9],[28.5,33.6],[29.8,32.6],[31.2,32.3],[31.3,34.2],[33,35.1],[34.7,35.9],[36.5,36],[36.8,34.6],[36.2,32.5],[36.7,30.6],[36.6,28.5],[37.4,27.2],[38.5,26.5],[39.5,26.6],[40,26.2],[40.9,25],[40.8,23.5],[40.3,23.7],[39.8,22.7],[38.7,23.1],[38,24],[37.9,23],[37,22.9],[36.5,22.6],[37,21.6],[38.2,21.4],[39.4,20.1],[40.5,19.5],[41.8,19.4],[42.5,18.5],[43.5,16.5],[44.5,15.2],[45.3,13.7],[45.7,13.1],[44.8,12.3],[43.7,13.6],[42.3,14.4],[41.9,16],[40.9,17.2],[40.3,18.5],[39.8,18.3],[40.5,17.1],[39.6,16.6],[38.4,16.3],[37.9,15.7],[38.7,16.1],[40,15.6],[41.2,13.6],[42,12.4],[43,10.6],[44.2,9.8],[44.4,8.9],[43.8,7.5],[43.2,5.5],[43.4,3.2],[42.4,3.2],[41.3,2.2],[39.7,0],[38.8,0.1],[37.6,-0.8],[36.7,-2.3],[36.7,-4.4],[36,-5.6],[36.8,-6.4],[37.1,-7.5]],
+ // Greenland, UK, Ireland, Iceland, Japan, SE Asia islands, Australasia, misc
+ [[83.5,-30],[82,-20],[80,-18],[76,-19],[72,-22],[70.4,-22],[68,-31],[65,-40],[61,-42.5],[59.8,-43.9],[62,-49.5],[65,-52],[68,-53],[70,-54],[72,-56],[76,-68.5],[78,-72],[80,-67],[82,-60],[83.2,-40]],
+ [[50.1,-5.7],[51.5,-3.2],[51.6,-5],[52.5,-4.1],[53.3,-4.6],[53.4,-3],[54.8,-3.3],[55,-5],[56,-5.7],[57.5,-5.8],[58.6,-5],[58.6,-3],[57.5,-1.8],[56,-2.7],[55,-1.5],[53.5,0.2],[52.7,1.7],[51.4,1.4],[50.8,0.3],[50.6,-2]],
+ [[51.5,-9.7],[52.1,-10.3],[53.5,-10],[55.2,-7.4],[54.5,-5.6],[53.3,-6],[52.2,-6.4],[51.8,-8.3]],
+ [[63.4,-20],[63.8,-22.7],[65.5,-24.3],[66.4,-22.5],[66.5,-16],[65,-13.5],[64,-15],[63.4,-18]],
+ [[41.4,141.4],[40,142],[38,141.5],[36,140.8],[35.2,140],[34.8,139.3],[34.5,137.5],[34,136],[33.6,135.8],[34.7,135.2],[34.3,133],[33.9,131],[35.5,133],[36.3,136.2],[37.5,137],[38.5,139.4],[40.6,140]],
+ [[33.8,131],[31.2,131],[31.5,130.2],[33,129.8]],
+ [[45.4,141.8],[43.2,145.5],[42.9,144],[41.8,143],[42,140.5],[43,140.4],[44.5,141.7]],
+ [[54.2,142.8],[50,143.5],[46.3,143.3],[46,142.2],[50,142],[53.5,142.1]],
+ [[25.2,121.5],[23,121.5],[22,120.8],[23.5,120.1]],
+ [[18.5,120.7],[18.4,122.2],[16,122.2],[14,124],[13.8,120.7],[16,119.8]],
+ [[9.5,126.5],[7,126.5],[6.5,125],[7.5,122],[8.5,123.5],[9.6,125.5]],
+ [[7,116.8],[6,118.3],[4.2,118],[1.5,118.8],[-1.3,116.8],[-3.5,116],[-4.2,114.5],[-3,111.8],[-2,110],[1,109],[2,111.5],[3.5,113.5],[5,115.2]],
+ [[5.6,95.3],[4,98],[2,100.5],[0,103.5],[-2,106],[-5.8,105.8],[-4.5,103.3],[-2,101.2],[0.5,99],[2.5,97]],
+ [[-6.2,105.5],[-6,106.8],[-6.5,108.5],[-6.8,111],[-6.9,112.8],[-7.8,114.5],[-8.7,114.5],[-8.2,112],[-7.8,109],[-7.5,106.5]],
+ [[1.2,120.8],[1,124.5],[-1,123.3],[-3,122.5],[-5.5,122],[-5.5,119.5],[-3,119.5],[0,119.8]],
+ [[-0.8,131.2],[-2.7,132.7],[-3.7,135],[-2.6,138],[-2.4,141],[-4.3,144.2],[-6.2,147.3],[-8.2,148.4],[-10.2,150.6],[-10.6,149.2],[-9,146.3],[-8,143],[-9.2,141],[-8.2,138.3],[-5.5,137.5],[-4.3,133.5],[-3,132.3]],
+ [[-10.7,142.5],[-14,141.6],[-17.7,140.9],[-15,135.5],[-12.2,136.8],[-12.2,131.1],[-14.5,129.5],[-14.2,127],[-16,124.5],[-18,122],[-20.5,118.5],[-22,114],[-26,113.5],[-30,115],[-32,115.7],[-34.3,115.1],[-35,117.9],[-34,123.5],[-32,128],[-31.7,131.2],[-34.8,138.5],[-36.5,139.8],[-38,140.5],[-38.8,143.5],[-38.5,146.5],[-37.5,149.9],[-34,151.2],[-30,153.3],[-27,153.4],[-24,151.5],[-22,150],[-19.3,147],[-16.5,145.5],[-13.5,143.5]],
+ [[-40.7,144.7],[-41,148.3],[-43.5,147],[-43.5,146],[-41.2,145.2]],
+ [[-34.5,173],[-36.5,175.3],[-37.7,178.5],[-39.5,177.2],[-41.5,175.9],[-39.4,174.2],[-37.5,174.6],[-35.5,173.4]],
+ [[-40.6,172.7],[-41.6,174.2],[-43.6,173],[-46.2,170.7],[-46.6,168.3],[-45,167],[-43.3,169.2],[-41.7,171.5]],
+ [[-12,49.3],[-15.5,50.3],[-19,49],[-22,47.8],[-25.4,45.1],[-24.5,43.7],[-21.5,43.4],[-17,44],[-15.5,46.4],[-13.5,48.4]],
+ [[9.8,80.2],[7,81.9],[6,80.5],[7.5,79.7]],
+ [[22.9,-83.9],[23.1,-81.5],[22.4,-79.5],[21,-76.5],[20.2,-74.2],[19.9,-77],[21.6,-81.8],[22,-84.5]],
+ [[19.9,-72.8],[19.8,-70],[18.5,-68.4],[17.9,-71],[18.4,-73.8]],
+ [[73.5,-80],[71.5,-71],[69,-66.5],[66.5,-62],[63.5,-64.5],[62.6,-69.5],[64,-74],[64.5,-77.5],[67.5,-74],[68.5,-81],[70,-86],[72.5,-86.5]],
+ [[83,-70],[82.7,-62],[81,-62],[78.5,-75],[76.5,-78],[77.5,-90],[80,-92],[82,-85],[83,-77]],
+ [[73,-117],[72,-105],[69.5,-102],[69,-111],[70.5,-118]],
+ [[51.6,-55.5],[49.5,-53.5],[47.6,-52.7],[47.6,-59.2],[49.5,-58.5],[51,-56]],
+ [[38.1,12.4],[38.3,15.6],[36.7,15.1],[37.2,12.5]],
+ [[41.2,9.2],[39.2,9.6],[38.9,8.4],[40.8,8.2]],
+ [[35.6,23.6],[35.3,26.3],[34.9,24.5]],
+ [[35.6,34.6],[35.1,32.3],[34.6,33],[35,34.1]]
+];
+const WATER = [
+ [[41.2,28.9],[41.2,31],[41.9,35],[41.1,37],[41,40],[41.6,41.6],[43,40],[44.5,38],[45.3,36.5],[45.2,35.2],[46.1,33],[46.5,31.5],[46.6,30.7],[45.2,29.7],[43.7,28],[42.2,27.8]],
+ [[46.9,49.2],[45.4,47.2],[43.4,47.6],[41.8,48.8],[39.5,49.3],[37.2,49.3],[36.7,53.9],[38.5,53.9],[40.3,53],[41.6,52.5],[43.2,51.3],[44.6,50.4],[46.5,53.2]],
+ [[49,-88.5],[47.6,-84.8],[46.6,-84],[45.8,-81.8],[44.2,-81.7],[43,-82.5],[44.2,-80.2],[45.8,-80.6],[46,-83],[44,-85.5],[42,-87.2],[42,-86.5],[43.5,-87.6],[45.5,-87],[46.4,-88]]
+];
+function inPoly(lat,lng,poly){
+  let inside=false;
+  for(let i=0,j=poly.length-1;i<poly.length;j=i++){
+    const yi=poly[i][0], xi=poly[i][1], yj=poly[j][0], xj=poly[j][1];
+    if((yi>lat)!==(yj>lat) && lng < (xj-xi)*(lat-yi)/(yj-yi)+xi) inside=!inside;
+  }
+  return inside;
+}
+const BB = p => { let a=90,b=-90,c=400,d=-400; for(const q of p){ a=Math.min(a,q[0]); b=Math.max(b,q[0]); c=Math.min(c,q[1]); d=Math.max(d,q[1]); } return [a,b,c,d]; };
+const LANDP = LAND.map(p=>({p,bb:BB(p)})), WATERP = WATER.map(p=>({p,bb:BB(p)}));
+function inAny(list,lat,lng){
+  for(const o of list){
+    const [a,b,c,d]=o.bb;
+    if(lat<a||lat>b) continue;
+    if(lng>=c&&lng<=d&&inPoly(lat,lng,o.p)) return true;
+    const l2=lng+360; if(l2>=c&&l2<=d&&inPoly(lat,l2,o.p)) return true;
+  }
+  return false;
+}
+function isLand(lat,lng){
+  if(lat < -71) return true;
+  if(!inAny(LANDP,lat,lng)) return false;
+  return !inAny(WATERP,lat,lng);
+}
+
+/* Fibonacci sphere sampling: land dots + (for midnight) faint ocean dots */
+const D2R = Math.PI/180;
+const land = [], ocean = [];
+(function(){
+  const N = 11000, ga = Math.PI*(3-Math.sqrt(5));
+  for(let i=0;i<N;i++){
+    const y = 1 - (i/(N-1))*2, r = Math.sqrt(1-y*y), th = ga*i;
+    const x = Math.cos(th)*r, z = Math.sin(th)*r;
+    const lat = Math.asin(y)/D2R, lng = Math.atan2(x,z)/D2R;
+    (isLand(lat,lng) ? land : ocean).push(x,y,z);
+  }
+})();
+const LAND_N = land.length/3, OCEAN_N = ocean.length/3;
+const landArr = new Float32Array(land), oceanArr = new Float32Array(ocean);
+const bucketA = [0,1,2,3].map(()=>new Float32Array(LAND_N*2+4)), bucketN = [0,0,0,0];
+
+const ll2v = (lat,lng)=>[Math.cos(lat*D2R)*Math.sin(lng*D2R), Math.sin(lat*D2R), Math.cos(lat*D2R)*Math.cos(lng*D2R)];
+let HOME = ll2v(loc0.lat, loc0.lng);
+const PINS = SITE.currencies.map(c=>({code:c.code, v:ll2v(c.lat,c.lng), sx:0, sy:0, z:-1}));
+const PIN = Object.fromEntries(PINS.map(p=>[p.code,p]));
+const home = {sx:0,sy:0,z:-1};
+
+/* camera / rotation state */
+let yaw=0, tilt=0, yawT=0, tiltT=0, selCode = null;
+let mx=0, my=0, px=0, py=0;
+let cosY=1,sinY=0,cosT=1,sinT=0;
+function setRot(){ cosY=Math.cos(yaw); sinY=Math.sin(yaw); cosT=Math.cos(tilt); sinT=Math.sin(tilt); }
+function proj(x,y,z,s){ // returns [sx,sy,depth]
+  const x1 = x*cosY + z*sinY, z1 = -x*sinY + z*cosY;
+  const y2 = y*cosT - z1*sinT, z2 = y*sinT + z1*cosT;
+  return [GX + s*x1, GY - s*y2, z2, x1, y2];
+}
+
+function layoutGlobe(){
+  DPR = Math.min(window.devicePixelRatio||1, 2);
+  W = gc.clientWidth; H = gc.clientHeight;
+  gc.width = Math.round(W*DPR); gc.height = Math.round(H*DPR);
+  if(W >= 980){ GR = Math.min(H*0.40, W*0.285); GX = W*0.715; GY = H*0.50; }
+  else { GR = Math.min(W*0.40, H*0.35); GX = W*0.5; GY = H*0.50; }
+  layoutNote();
+}
+function layoutNote(){
+  const note = $('#note');
+  const nw = W>=980 ? Math.max(290, Math.min(360, GR*1.1)) : Math.min(250, W*0.62);
+  note.style.setProperty('--nw', nw+'px');
+  const nh = nw/2.1;
+  let cx, cy;
+  if(W>=980){
+    cx = GX - GR*0.40; cy = GY + GR*0.64;
+    // never cover the calculator card
+    const calc = $('#calc'); if(calc){ const cr = calc.getBoundingClientRect(), hr = hero.getBoundingClientRect();
+      const minLeft = cr.right - hr.left + 16; if(cx - nw/2 < minLeft) cx = minLeft + nw/2;
+      cx = Math.min(cx, W - nw/2 - 12); }
+  }
+  else { cx = GX + GR*0.34; cy = GY + GR*0.98; }
+  note.style.left = (cx - nw/2)+'px';
+  note.style.top = (cy - nh/2)+'px';
+  note._cx = cx; note._cy = cy;
+}
+window.addEventListener('resize', ()=>{ layoutGlobe(); });
+if('ResizeObserver' in window) new ResizeObserver(()=>layoutGlobe()).observe(gc);
+
+/* selection → rotation target, arc, note */
+let arc = null; // {pts:[[x,y,z]...], t0, dur}
+function buildArc(dest){
+  const a = HOME, b = dest;
+  const dot = Math.max(-1,Math.min(1,a[0]*b[0]+a[1]*b[1]+a[2]*b[2]));
+  const ang = Math.acos(dot), s = Math.sin(ang);
+  const pts=[]; const n=90;
+  for(let i=0;i<=n;i++){
+    const t=i/n, w1=Math.sin((1-t)*ang)/s, w2=Math.sin(t*ang)/s;
+    let x=a[0]*w1+b[0]*w2, y=a[1]*w1+b[1]*w2, z=a[2]*w1+b[2]*w2;
+    const l=Math.hypot(x,y,z); x/=l;y/=l;z/=l;
+    const lift = 1.003 + Math.sin(Math.PI*t)*(0.08+0.20*ang/Math.PI);
+    pts.push([x*lift,y*lift,z*lift]);
+  }
+  return pts;
+}
+function globeSelect(code, opts){
+  const c = byCode[code]; const d = PIN[code].v;
+  selCode = code;
+  const m = [HOME[0]+d[0], HOME[1]+d[1], HOME[2]+d[2]]; const l = Math.hypot(...m);
+  const mlat = Math.asin(m[1]/l), mlng = Math.atan2(m[0],m[2]);
+  // choose nearest equivalent yaw so the globe takes the short way round
+  let target = -mlng; let diff = ((target - yaw + Math.PI) % (2*Math.PI) + 2*Math.PI) % (2*Math.PI) - Math.PI;
+  yawT = yaw + diff;
+  tiltT = Math.max(-0.45, Math.min(0.75, mlat*0.8 + 0.08));
+  arc = { pts: buildArc(d), t0: performance.now(), dur: 1400 };
+  const lbl = $('#lblDest'); lbl.textContent = `${c.city} · ${c.code}`;
+  flyNote();
+}
+$('#lblHome').textContent = loc0.name+', '+loc0.state;
+
+/* note fly-in */
+let flyAnim = null, noteVisible = false;
+function flyNote(){
+  const fly = $('#noteFly'), card = $('#noteCard'), note=$('#note');
+  if(flyAnim){ flyAnim.forEach(a=>a.cancel()); }
+  const p = selCode ? PIN[selCode] : null;
+  let dx = 0, dy = 0;
+  if(p && note._cx!=null){ dx = (p.sx||GX) - note._cx; dy = (p.sy||GY) - note._cy; }
+  const dur = reduce ? 1 : (noteVisible ? 820 : 1150);
+  const ease = 'cubic-bezier(.18,.9,.25,1.08)';
+  flyAnim = [
+    fly.animate([{transform:`translate(${dx}px,${dy}px) scale(.12)`,opacity:0},{transform:'translate(0,0) scale(1)',opacity:1}],{duration:dur,easing:ease,fill:'both'}),
+    card.animate([{transform:'rotateY(200deg) rotateZ(-14deg)'},{transform:'rotateY(0deg) rotateZ(0deg)'}],{duration:dur*1.05,easing:ease,fill:'both'})
+  ];
+  noteVisible = true;
+}
+
+/* pointer interaction */
+const hero = $('#top');
+hero.addEventListener('pointermove',e=>{
+  const r = hero.getBoundingClientRect();
+  mx = (e.clientX - r.left)/r.width - .5; my = (e.clientY - r.top)/r.height - .5;
+  $('#noteTilt').style.setProperty('--ry', (mx*14)+'deg');
+  $('#noteTilt').style.setProperty('--rx', (-my*10)+'deg');
+  const hit = pickPin(e); gc.style.cursor = hit ? 'pointer' : 'default';
+});
+gc.addEventListener('click',e=>{ const hit = pickPin(e); if(hit){ userTouched(); select(hit); } });
+function pickPin(e){
+  const r = gc.getBoundingClientRect(); const x = e.clientX - r.left, y = e.clientY - r.top;
+  let best=null, bd=18*18;
+  for(const p of PINS){ if(p.z<0.05) continue; const d=(p.sx-x)**2+(p.sy-y)**2; if(d<bd){bd=d;best=p.code;} }
+  return best;
+}
+
+/* auto-demo until the visitor interacts */
+let touched = false, autoTimer = null;
+function userTouched(){ touched = true; if(autoTimer){ clearInterval(autoTimer); autoTimer=null; } }
+function startAuto(){
+  if(reduce) return;
+  const order = ['EUR','JPY','GBP','AUD','MXN','CAD','CHF','NZD']; let i = 0;
+  autoTimer = setInterval(()=>{
+    if(touched || document.hidden || !heroVisible) return;
+    i = (i+1) % order.length; select(order[i]);
+  }, 5200);
+}
+
+/* ---------- drawing ---------- */
+const SYMS = SITE.currencies.map(c=>({sym:c.sym, code:c.code}));
+let heroVisible = true;
+if('IntersectionObserver' in window) new IntersectionObserver(en=>{ heroVisible = en[0].isIntersecting; },{threshold:0}).observe(hero);
+
+const COL = theme==='midnight' ? {
+  dotLand:'160,190,255', dotOcean:'110,140,230', sphere:['#10265A','#081834','#040B1F'], rim:'rgba(110,150,255,', arc:'45,212,191', arcGlow:'45,212,191',
+  home:'#FFFFFF', pin:'#CFE0FF', sel:'#2DD4BF', grat:'140,170,255', sym:'190,210,255'
+} : {
+  dotLand:'168,196,246', dotOcean:'120,150,220', sphere:['#1C4285','#102C5C','#091C3D'], rim:'rgba(60,100,200,', arc:'45,212,191', arcGlow:'45,212,191',
+  home:'#FFFFFF', pin:'#FFFFFF', sel:'#2DD4BF', grat:'150,180,235', sym:'42,58,154'
+};
+const stars = Array.from({length:130},()=>({x:Math.random(),y:Math.random(),r:Math.random()*1.1+.2,p:Math.random()*6.28}));
+
+function ringPts(v, th, n=28){
+  // circle of angular radius th around unit vector v
+  let ux, uy, uz;
+  if(Math.abs(v[1])<0.9){ ux=v[2]; uy=0; uz=-v[0]; } else { ux=1; uy=0; uz=0; }
+  let l=Math.hypot(ux,uy,uz); ux/=l;uy/=l;uz/=l;
+  const wx=v[1]*uz-v[2]*uy, wy=v[2]*ux-v[0]*uz, wz=v[0]*uy-v[1]*ux;
+  const ct=Math.cos(th), st=Math.sin(th), out=[];
+  for(let i=0;i<=n;i++){
+    const a=i/n*Math.PI*2, ca=Math.cos(a), sa=Math.sin(a);
+    out.push([v[0]*ct+(ux*ca+wx*sa)*st, v[1]*ct+(uy*ca+wy*sa)*st, v[2]*ct+(uz*ca+wz*sa)*st]);
+  }
+  return out;
+}
+function strokeVisible(pts, s, style, lw){
+  g.strokeStyle=style; g.lineWidth=lw; g.beginPath(); let pen=false;
+  for(const p of pts){
+    const q = proj(p[0],p[1],p[2],s);
+    const vis = q[2]>0 || (q[3]*q[3]+q[4]*q[4])*s*s > s*s*1.0 && false;
+    if(q[2]>0){ if(!pen){g.moveTo(q[0],q[1]);pen=true;} else g.lineTo(q[0],q[1]); } else pen=false;
+  }
+  g.stroke();
+}
+
+let last = performance.now(), T = 0;
+function frame(now){
+  requestAnimationFrame(frame);
+  const dt = Math.min(.05,(now-last)/1000); last = now;
+  if(!heroVisible) return;
+  T += dt;
+  // ease rotation
+  const k = reduce ? 14 : 2.4;
+  yaw += (yawT - yaw)*(1-Math.exp(-dt*k));
+  tilt += (tiltT - tilt)*(1-Math.exp(-dt*k));
+  px += (mx-px)*(1-Math.exp(-dt*4)); py += (my-py)*(1-Math.exp(-dt*4));
+  const drift = reduce ? 0 : Math.sin(T*.25)*.035;
+  const yawS = yaw + drift; const keepY = yaw; yaw = yawS; setRot();
+  const ox = px*-10, oy = py*-8;
+  const BX = GX, BY = GY; GX += ox; GY += oy;
+
+  g.setTransform(DPR,0,0,DPR,0,0);
+  g.clearRect(0,0,W,H);
+
+  // stars (midnight only)
+  if(theme==='midnight'){
+    for(const s of stars){ const a = .25 + .5*(.5+.5*Math.sin(T*1.2+s.p)); g.fillStyle=`rgba(200,215,255,${reduce?.4:a})`; g.fillRect(s.x*W + px*-14*s.r, s.y*H*0.9 + py*-10*s.r, s.r, s.r); }
+  }
+
+  // orbiting currency symbols (back half first)
+  const orbit = (front)=>{
+    const n = SYMS.length, R2 = GR*1.2;
+    g.textAlign='center'; g.textBaseline='middle';
+    for(let i=0;i<n;i++){
+      const a = (reduce?0:T*.22) + i*Math.PI*2/n;
+      let x = Math.cos(a), z = Math.sin(a), y = 0;
+      const tl=.34; const y2 = y*Math.cos(tl) - z*Math.sin(tl), z2 = y*Math.sin(tl) + z*Math.cos(tl);
+      const isFront = z2>0; if(isFront!==front) continue;
+      const sx = Math.max(30, Math.min(W-30, GX + R2*x)), sy = GY - R2*y2*0.9 + 0*z2;
+      const depth = (z2+1)/2; const sel = SYMS[i].code===selCode;
+      const size = (13 + depth*9) * (sel?1.35:1);
+      g.font = `700 ${size}px Sora, sans-serif`;
+      g.fillStyle = sel ? `rgba(${COL.arc},${.7+.3*depth})` : `rgba(${COL.sym},${.25+.55*depth})`;
+      if(sel){ g.shadowColor=`rgba(${COL.arc},.8)`; g.shadowBlur=14; }
+      g.fillText(SYMS[i].sym, sx, sy);
+      g.shadowBlur=0;
+    }
+  };
+  orbit(false);
+
+  // atmosphere glow
+  const ag = g.createRadialGradient(GX,GY,GR*.96,GX,GY,GR*1.32);
+  ag.addColorStop(0, COL.rim+(theme==='midnight'?'.38)':'.30)')); ag.addColorStop(1, COL.rim+'0)');
+  g.fillStyle=ag; g.beginPath(); g.arc(GX,GY,GR*1.32,0,Math.PI*2); g.fill();
+
+  // sphere body
+  const sg = g.createRadialGradient(GX-GR*.32,GY-GR*.36,GR*.05,GX,GY,GR);
+  sg.addColorStop(0,COL.sphere[0]); sg.addColorStop(.62,COL.sphere[1]); sg.addColorStop(1,COL.sphere[2]);
+  g.fillStyle=sg; g.beginPath(); g.arc(GX,GY,GR,0,Math.PI*2); g.fill();
+
+  // graticule
+  g.lineJoin='round';
+  for(let lat=-60;lat<=60;lat+=30){
+    const pts=[]; for(let l=0;l<=360;l+=6) pts.push(ll2v(lat,l-180));
+    strokeVisible(pts,GR,`rgba(${COL.grat},.10)`,1);
+  }
+  for(let lng=-180;lng<180;lng+=30){
+    const pts=[]; for(let l=-90;l<=90;l+=6) pts.push(ll2v(l,lng));
+    strokeVisible(pts,GR,`rgba(${COL.grat},.10)`,1);
+  }
+
+  // ocean dots (midnight hologram feel) — inline math, no allocations
+  const cY=cosY, sY=sinY, cT=cosT, sT=sinT;
+  if(theme==='midnight'){
+    g.fillStyle=`rgba(${COL.dotOcean},.17)`; g.beginPath();
+    for(let i=0;i<OCEAN_N;i+=2){
+      const x=oceanArr[i*3], y=oceanArr[i*3+1], z=oceanArr[i*3+2];
+      const z1 = -x*sY + z*cY, z2 = y*sT + z1*cT;
+      if(z2>0.04){ g.rect(GX + GR*(x*cY + z*sY) - .5, GY - GR*(y*cT - z1*sT) - .5, 1.1, 1.1); }
+    }
+    g.fill();
+  }
+  // land dots, bucketed by depth for soft limb falloff
+  bucketN[0]=bucketN[1]=bucketN[2]=bucketN[3]=0;
+  for(let i=0;i<LAND_N;i++){
+    const x=landArr[i*3], y=landArr[i*3+1], z=landArr[i*3+2];
+    const z1 = -x*sY + z*cY, z2 = y*sT + z1*cT;
+    if(z2<=0) continue;
+    const b = z2>.62?3 : z2>.38?2 : z2>.18?1 : 0;
+    const a = bucketA[b]; let n = bucketN[b];
+    a[n++] = GX + GR*(x*cY + z*sY); a[n++] = GY - GR*(y*cT - z1*sT); bucketN[b] = n;
+  }
+  const alphas = [.28,.52,.78,.98], rads=[.9,1.2,1.5,1.7];
+  const scale = Math.max(.8, GR/230);
+  for(let b=0;b<4;b++){
+    g.fillStyle=`rgba(${COL.dotLand},${alphas[b]})`; g.beginPath();
+    const arr=bucketA[b], r=rads[b]*scale, n=bucketN[b];
+    for(let i=0;i<n;i+=2){ g.moveTo(arr[i]+r,arr[i+1]); g.arc(arr[i],arr[i+1],r,0,6.2832); }
+    g.fill();
+  }
+  // shading to sell the 3D curve
+  const sh = g.createRadialGradient(GX-GR*.3,GY-GR*.34,GR*.25,GX,GY,GR*1.02);
+  sh.addColorStop(0,'rgba(255,255,255,.0)'); sh.addColorStop(.7,'rgba(0,0,0,.10)'); sh.addColorStop(1,'rgba(0,0,10,.5)');
+  g.fillStyle=sh; g.beginPath(); g.arc(GX,GY,GR,0,Math.PI*2); g.fill();
+  g.strokeStyle=COL.rim+'.55)'; g.lineWidth=1.4; g.beginPath(); g.arc(GX,GY,GR,0,Math.PI*2); g.stroke();
+
+  // pins
+  const ph = proj(HOME[0],HOME[1],HOME[2],GR*1.003); home.sx=ph[0]; home.sy=ph[1]; home.z=ph[2];
+  for(const p of PINS){ const q=proj(p.v[0],p.v[1],p.v[2],GR*1.003); p.sx=q[0]; p.sy=q[1]; p.z=q[2]; }
+
+  const pulse = (v, color, phaseOff, maxTh)=>{
+    if(reduce) return;
+    for(let k=0;k<2;k++){
+      const ph = ((T*.55 + phaseOff + k*.5)%1);
+      strokeVisible(ringPts(v, .012+ph*maxTh), GR*1.003, `rgba(${color},${(1-ph)*.75})`, 1.6);
+    }
+  };
+  pulse(HOME,'255,255,255',0,.17);
+  if(selCode) pulse(PIN[selCode].v, COL.arc, .25, .15);
+
+  // arc
+  if(arc){
+    const prog = Math.max(0, Math.min(1,(now-arc.t0)/arc.dur)); const e = 1-Math.pow(1-prog,3);
+    const cnt = Math.max(2, Math.floor(e*(arc.pts.length-1)));
+    const path = new Path2D(); let pen=false; let head=null;
+    for(let i=0;i<=cnt;i++){
+      const p = arc.pts[i]; const q = proj(p[0],p[1],p[2],GR);
+      const outside = (q[3]*q[3]+q[4]*q[4]) > 1.0;
+      if(q[2]>0 || outside){ if(!pen){path.moveTo(q[0],q[1]);pen=true;} else path.lineTo(q[0],q[1]); head=q; } else pen=false;
+    }
+    g.lineCap='round';
+    if(theme==='midnight'){ g.shadowColor=`rgba(${COL.arcGlow},.9)`; g.shadowBlur=16; }
+    g.strokeStyle=`rgba(${COL.arc},.28)`; g.lineWidth=7; g.stroke(path);
+    g.shadowBlur=0;
+    g.strokeStyle=`rgba(255,${theme==='midnight'?150:170},${theme==='midnight'?140:150},.98)`; g.lineWidth=2.2; g.stroke(path);
+    // traveling "money" packet
+    const u = prog<1 ? e : ((T*.32)%1);
+    const idx = Math.min(arc.pts.length-1, Math.floor(u*(arc.pts.length-1)));
+    const pp = arc.pts[idx]; const pq = proj(pp[0],pp[1],pp[2],GR);
+    if(pq[2]>0 || (pq[3]*pq[3]+pq[4]*pq[4])>1){
+      const gg = g.createRadialGradient(pq[0],pq[1],0,pq[0],pq[1],14);
+      gg.addColorStop(0,'rgba(255,255,255,1)'); gg.addColorStop(.35,`rgba(${COL.arc},.7)`); gg.addColorStop(1,`rgba(${COL.arc},0)`);
+      g.fillStyle=gg; g.beginPath(); g.arc(pq[0],pq[1],14,0,6.2832); g.fill();
+    }
+  }
+
+  // pin dots
+  const dotAt = (p, rad, fill, halo)=>{
+    if(p.z<=0) return;
+    const hg = g.createRadialGradient(p.sx,p.sy,0,p.sx,p.sy,rad*3);
+    hg.addColorStop(0,halo); hg.addColorStop(1,'rgba(255,255,255,0)');
+    g.fillStyle=hg; g.beginPath(); g.arc(p.sx,p.sy,rad*3,0,6.2832); g.fill();
+    g.fillStyle=fill; g.beginPath(); g.arc(p.sx,p.sy,rad,0,6.2832); g.fill();
+    g.strokeStyle='rgba(255,255,255,.9)'; g.lineWidth=1.2; g.stroke();
+  };
+  for(const p of PINS){ if(p.code===selCode) continue; dotAt(p, 3.4*scale, COL.pin, 'rgba(160,190,255,.35)'); }
+  if(selCode) dotAt(PIN[selCode], 5.2*scale, COL.sel, 'rgba(45,212,191,.5)');
+  dotAt(home, 5.4*scale, COL.home, 'rgba(255,255,255,.45)');
+
+  orbit(true);
+
+  // labels
+  const place = (el, p, on)=>{ if(on && p.z>0.12){ el.style.left=(p.sx)+'px'; el.style.top=(p.sy)+'px'; el.classList.add('on'); } else el.classList.remove('on'); };
+  place($('#lblHome'), home, true);
+  if(selCode) place($('#lblDest'), PIN[selCode], true);
+
+  yaw = keepY; GX = BX; GY = BY;
+}
+
+/* ---------- rate board ---------- */
+const spreadPct = c => (((c.buy-c.sell)/c.buy)*100).toFixed(1)+'%';
+function rateBox(k,c,dp){
+  const v=c[k], lbl = k==='buy' ? 'Buy rate' : 'Sell rate';
+  const val = S.edit ? `<input class="redit" data-k="${k}" inputmode="decimal" value="${v.toFixed(6)}" aria-label="${c.name} ${lbl.toLowerCase()}, USD per 1 ${c.code}">` : `<strong>$${v.toFixed(6)}</strong>`;
+  return `<div class="rate ${k}"><span>${lbl}</span>${val}<em>${(1/v).toFixed(dp)} ${c.code} per $1</em></div>`;
+}
+function renderRates(filter=''){
+  const grid = $('#rateGrid'); grid.innerHTML='';
+  const q = filter.trim().toLowerCase();
+  const list = SITE.currencies.filter(c=>!q || (c.name+' '+c.code+' '+c.city).toLowerCase().includes(q));
+  if(!list.length){ grid.innerHTML = '<div class="empty">No currency matches that search. Try "Euro" or "GBP".</div>'; return; }
+  list.forEach(c=>{
+    const el = document.createElement('article'); el.className='rate-card rv'; el.dataset.code=c.code;
+    const dp = c.code==='JPY'?2:4;
+    el.innerHTML = `
+      <div class="rc-head"><span class="flag">${flag(c.code)}</span><div><h3>${c.name}</h3><p>${c.code}</p></div></div>
+      <div class="pair">
+        ${rateBox('buy',c,dp)}
+        ${rateBox('sell',c,dp)}
+      </div>
+      ${S.edit?`<div class="spread">Spread <b>${spreadPct(c)}</b></div>`:''}
+      <button class="rc-btn" type="button">Use in calculator</button>`;
+    el.querySelector('.rc-btn').addEventListener('click',()=>{ userTouched(); select(c.code); $('#top').scrollIntoView({behavior: reduce?'auto':'smooth'}); setTimeout(()=>$('#amt').focus({preventScroll:true}),500); });
+    tilt3D(el);
+    grid.appendChild(el);
+    requestAnimationFrame(()=>el.classList.add('in'));
+  });
+}
+$('#search').addEventListener('input',e=>renderRates(e.target.value));
+$('#rateGrid').addEventListener('input',e=>{
+  const inp = e.target.closest('.redit'); if(!inp) return;
+  const card = inp.closest('.rate-card'), c = byCode[card.dataset.code], k = inp.dataset.k;
+  const v = parseFloat(inp.value.replace(/[^\d.]/g,'')); if(!(v>0)) return;
+  c[k] = v; const dp = c.code==='JPY'?2:4;
+  card.querySelector('.rate.'+k+' em').textContent = `${(1/v).toFixed(dp)} ${c.code} per $1`;
+  const sp = card.querySelector('.spread b'); if(sp) sp.textContent = spreadPct(c);
+  $('#stampTxt').textContent = 'Edited '+clock(new Date())+' · not yet published';
+  saveRates(); renderCalc();
+});
+$('#ownerBtn').addEventListener('click',()=>{ S.edit=!S.edit; $('#ownerBtn').setAttribute('aria-pressed',String(S.edit)); $('#editBar').hidden=!S.edit; renderRates($('#search').value); });
+$('#ebReset').addEventListener('click',()=>{ SITE.currencies.forEach(c=>{ c.buy=DEF_RATES[c.code].buy; c.sell=DEF_RATES[c.code].sell; }); saveRates(); $('#stampTxt').textContent=SITE.rateStamp; renderRates($('#search').value); renderCalc(); toast('Rates reset to the sample board'); });
+$('#ebPublish').addEventListener('click',()=>{ $('#stampTxt').textContent='Published '+clock(new Date())+' to all branches'; toast('Published to '+SITE.locations.length+' branches at '+clock(new Date())+' (demo)'); });
+
+function tilt3D(el){
+  if(reduce || matchMedia('(hover:none)').matches) return;
+  el.addEventListener('pointermove',e=>{ const r=el.getBoundingClientRect(); const x=(e.clientX-r.left)/r.width-.5, y=(e.clientY-r.top)/r.height-.5; el.style.transition='border-color .25s'; el.style.transform=`perspective(900px) rotateY(${x*7}deg) rotateX(${-y*7}deg) translateY(-3px)`; });
+  el.addEventListener('pointerleave',()=>{ el.style.transition='transform .4s ease,border-color .25s'; el.style.transform=''; });
+}
+
+/* ---------- services, about, visit ---------- */
+SITE.services.forEach(s=>{
+  const d=document.createElement('article'); d.className='svc rv';
+  d.innerHTML = `<div class="ic">${ICONS[s.icon]}</div><h3>${s.title}</h3><p>${s.blurb}</p><ul>${s.points.map(p=>`<li>${p}</li>`).join('')}</ul><a class="btn btn-primary" href="#visit">${s.cta}</a>`;
+  tilt3D(d); $('#svcGrid').appendChild(d);
+});
+SITE.extras.forEach(x=>{ const d=document.createElement('div'); d.className='extra rv'; d.innerHTML=`<h3>${x.t}</h3><p>${x.d}</p>`; $('#extras').appendChild(d); });
+
+const years = new Date().getFullYear() - SITE.founded;
+$('#aboutP1').textContent = `Founded in ${SITE.founded}, we began as a small family business with a simple mission: honest, transparent and competitive foreign exchange for our community.`;
+$('#aboutP2').textContent = `Over the years we've built strong relationships with banks and financial institutions worldwide, helping thousands of customers each year with travel money, international business transactions and more, with the personal touch that sets us apart.`;
+SITE.why.forEach(w=>{ const li=document.createElement('li'); li.innerHTML=`<i class="dot"></i><div><b>${w[0]}</b><span>${w[1]}</span></div>`; $('#why').appendChild(li); });
+[[years,'years serving customers','n'],[SITE.currencyCount,'currencies supported','t'],[SITE.services.length+SITE.extras.length+1,'services under one roof','n'],['Same-day','delivery options','t']].forEach(s=>{
+  const d=document.createElement('div'); d.className='stat'; d.innerHTML=`<b ${s[2]==='n'?`data-count="${s[0]}"`:''}>${s[2]==='n'?'0':s[0]}</b><span>${s[1]}</span>`; $('#stats').appendChild(d);
+});
+
+function renderRows(){ const L = loc0;
+$('#rows').innerHTML = `
+  <div class="row"><div class="ri">${ICONS.building}</div><div><small>Office</small><span>${L.office}</span></div></div>
+  <div class="row"><div class="ri">${ICONS.pin}</div><div><small>Location</small><span>${L.street}<br>${L.city}</span></div></div>
+  <div class="row"><div class="ri">${ICONS.compass}</div><div><small>Directions</small><span>${L.directions.join('<br>')}</span></div></div>
+  <div class="row"><div class="ri">${ICONS.phone}</div><div><small>Phone / Mobile</small><a href="tel:${L.phone.replace(/[^\d+]/g,'')}">${L.phone}</a>${L.mobile?` &nbsp;·&nbsp; <a href="tel:${L.mobile.replace(/[^\d+]/g,'')}">${L.mobile}</a>`:''}</div></div>
+  <div class="row"><div class="ri">${ICONS.mail}</div><div><small>Email</small><a href="mailto:${SITE.email}">${SITE.email}</a></div></div>`;
+  const mp = $('#mapFrame span'); if(mp) mp.textContent = 'Map · '+L.street;
+}
+renderRows();
+$('#social').innerHTML = `<a href="${SITE.social.facebook}" aria-label="Facebook">${ICONS.fb}</a><a href="${SITE.social.instagram}" aria-label="Instagram">${ICONS.ig}</a>`;
+
+$('#msgForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const f = e.target; if(![...f.querySelectorAll('[required]')].every(i=>i.value.trim())){ f.reportValidity?.(); return; }
+  f.style.display='none'; $('#msgOk').classList.add('on');
+});
+
+/* ---------- reservation ticket ---------- */
+function barcode(code){
+  let x=0,h=''; [...(code+code)].forEach(ch=>{ const b=ch.charCodeAt(0), w=1+(b%3), gap=1+((b>>2)%2); h+=`<rect x="${x}" y="0" width="${w}" height="34"/>`; x+=w+gap; });
+  return `<svg viewBox="0 0 ${x} 34" preserveAspectRatio="none" aria-hidden="true" fill="currentColor">${h}</svg>`;
+}
+let lockT = null;
+function startLock(exp){
+  clearInterval(lockT);
+  const tick=()=>{ const s=Math.max(0,Math.round((exp-Date.now())/1000)); $('#tkLeft').textContent = `${Math.floor(s/3600)}:${String(Math.floor(s%3600/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`; if(s<=0) clearInterval(lockT); };
+  tick(); lockT = setInterval(tick,1000);
+}
+function fillTicket(code){
+  const c = cur(), r = compute(), buy = S.mode==='buy';
+  const L2 = (!$('#locField').hidden && SITE.locations[$('#rLoc').selectedIndex]) || loc0;
+  $('#tkFrom').textContent = L2.short; $('#tkFromN').textContent = L2.name+', '+L2.state;
+  $('#tkTo').textContent = buy ? c.code : 'USD'; $('#tkToN').textContent = buy ? c.name : 'US Dollar';
+  $('#tkPay').textContent = buy ? `$${fmt(+S.amount||0,2)}` : `${fmt(+S.amount||0,decimals(c))} ${c.code}`;
+  $('#tkGet').textContent = buy ? `${c.sym==='CHF'?'CHF ':c.sym}${fmt(r.out,decimals(c))}` : `$${fmt(r.out,2)}`;
+  $('#tkRate').textContent = r.rateTxt;
+  $('#tkWhen').textContent = `${$('#rDay').value}, ${$('#rTime').value.toLowerCase()}`;
+  $('#tkBills').textContent = billText(r);
+  $('#barcode').innerHTML = barcode(code);
+  const exp = Date.now()+7200000; $('#tkHeld').textContent = 'until '+clock(new Date(exp)); startLock(exp);
+}
+/* ---------- reservation dialog ---------- */
+const dlg = $('#dlg');
+function openReserve(){
+  const c = cur(), r = compute();
+  $('#sumA').textContent = S.mode==='buy' ? `$${fmt(+S.amount||0,2)} → ${c.sym==='CHF'?'CHF ':c.sym}${fmt(r.out,decimals(c))} ${c.code}` : `${fmt(+S.amount||0,decimals(c))} ${c.code} → $${fmt(r.out,2)}`;
+  $('#sumR').textContent = r.rateTxt.replace('1 '+c.code+' = ','1 '+c.code+' = ');
+  const daySel = $('#rDay'); daySel.innerHTML='';
+  for(let i=0;i<7;i++){ const d=new Date(); d.setDate(d.getDate()+i); const o=document.createElement('option'); o.textContent = i===0?'Today':i===1?'Tomorrow':d.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'}); daySel.appendChild(o); }
+  const lf = $('#locField'); if(SITE.locations.length>1){ lf.hidden=false; const s=$('#rLoc'); s.innerHTML=''; SITE.locations.forEach(l=>{const o=document.createElement('option'); o.textContent=l.name; s.appendChild(o);}); s.selectedIndex=LI; }
+  $('#dlgForm').style.display=''; $('#dlgOk').classList.remove('on');
+  dlg.showModal();
+}
+$('#reserveBtn').onclick = ()=>{ userTouched(); openReserve(); };
+$('#navReserve').addEventListener('click',()=>{ userTouched(); setTimeout(()=>$('#amt').focus({preventScroll:true}),400); });
+$('#dlgX').onclick = ()=>dlg.close();
+dlg.addEventListener('close',()=>clearInterval(lockT));
+$('#okClose').onclick = ()=>dlg.close();
+dlg.addEventListener('click',e=>{ if(e.target===dlg) dlg.close(); });
+$('#resForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const f=e.target; if(![...f.querySelectorAll('[required]')].every(i=>i.value.trim())){ f.reportValidity?.(); return; }
+  const c = cur();
+  const code = 'MRX-'+Math.random().toString(36).slice(2,6).toUpperCase();
+  $('#okCode').textContent = code; fillTicket(code);
+  $('#okMsg').textContent = `Thanks, ${$('#rName').value.trim().split(' ')[0]}. We'll call you to confirm your ${c.code} exchange for ${$('#rDay').value.toLowerCase()} (${$('#rTime').value.toLowerCase()}).`;
+  $('#dlgForm').style.display='none'; $('#dlgOk').classList.add('on');
+});
+
+/* ---------- branches ---------- */
+function applyBranch(i, user){
+  LI = i; loc0 = SITE.locations[i];
+  $$('[data-site="eyebrow"]').forEach(e=>e.textContent=SITE.tagline+' · '+loc0.name+', '+loc0.state);
+  $$('[data-site="city"]').forEach(e=>e.textContent=loc0.name);
+  const tel = 'tel:'+loc0.phone.replace(/[^\d+]/g,'');
+  $('#callBtn').href = tel; $('#callBtn').textContent = 'Call '+loc0.phone; $('#okCall').href = tel;
+  HOME = ll2v(loc0.lat, loc0.lng);
+  $('#lblHome').textContent = loc0.name+', '+loc0.state;
+  renderRows();
+  $$('.bp').forEach(b=>b.setAttribute('aria-pressed', String(+b.dataset.i===i)));
+  if(user){ select(S.code); }
+}
+if(SITE.locations.length>1){
+  const bx = $('#branches'); bx.innerHTML = '<span class="bl">Branch</span>';
+  SITE.locations.forEach((l,i)=>{ const b=document.createElement('button'); b.type='button'; b.className='bp'; b.dataset.i=i; b.setAttribute('aria-pressed',String(i===0)); b.textContent=l.name; b.addEventListener('click',()=>{ userTouched(); applyBranch(i,true); }); bx.appendChild(b); });
+} else $('#branches').hidden = true;
+
+/* ---------- owner panel actions ---------- */
+const flash = el=>{ el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); };
+$$('[data-act]').forEach(b=>b.addEventListener('click',()=>{
+  userTouched(); const a=b.dataset.act, beh = reduce?'auto':'smooth';
+  if(a==='edit'){ if(!S.edit) $('#ownerBtn').click(); $('#rates').scrollIntoView({behavior:beh}); setTimeout(()=>$('.redit')?.focus({preventScroll:true}),600); }
+  if(a==='reserve'){ openReserve(); }
+  if(a==='bills'){ $('#top').scrollIntoView({behavior:beh}); S.mix = S.mix==='large'?'small':'large'; renderCalc(); setTimeout(()=>flash($('#bills')),500); }
+  if(a==='branch'){ $('#top').scrollIntoView({behavior:beh}); applyBranch((LI+1)%SITE.locations.length,true); setTimeout(()=>flash($('#branches')),500); }
+}));
+
+/* ---------- reveal + counters ---------- */
+function countUp(el){
+  const end = +el.dataset.count; if(reduce){ el.textContent=end; return; }
+  const t0=performance.now(), dur=1100;
+  const step=n=>{ const p=Math.min(1,(n-t0)/dur); el.textContent=Math.round(end*(1-Math.pow(1-p,3))); if(p<1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+if('IntersectionObserver' in window){
+  const io = new IntersectionObserver(en=>en.forEach(x=>{ if(x.isIntersecting){ x.target.classList.add('in'); x.target.querySelectorAll?.('[data-count]').forEach(countUp); if(x.target.dataset.count) countUp(x.target); io.unobserve(x.target); } }),{threshold:.12, rootMargin:'0px 0px -6% 0px'});
+  $$('.rv').forEach(el=>io.observe(el));
+  $$('[data-count]').forEach(el=>io.observe(el));
+} else { $$('.rv').forEach(el=>el.classList.add('in')); $$('[data-count]').forEach(el=>el.textContent=el.dataset.count); }
+
+/* ---------- boot ---------- */
+layoutGlobe();
+renderCalc();
+renderRates();
+// start with the globe spun away, then settle on Bayview → Euro
+yaw = -loc0.lng*D2R + 3.4; yawT = yaw; tilt = 0.1; tiltT = 0.1; setRot();
+requestAnimationFrame(now=>{ last = now; frame(now); });
+setTimeout(()=>{ select('EUR'); startAuto(); }, reduce?50:700);
+document.fonts && document.fonts.ready.then(()=>{ renderCalc(); layoutNote(); });
+})();
+</script>
+
+</body>
+</html>

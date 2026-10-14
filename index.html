@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Meridian Exchange Demos</title>
+<style>
+  :root{--bg:#F4F7FC;--ink:#0D2447;--muted:#53657F;--card:#fff;--line:rgba(13,36,71,.12);--accent:#0B7A76}
+  @media(prefers-color-scheme:dark){:root{--bg:#050D20;--ink:#EDF2FC;--muted:#9FB2D6;--card:#0B1832;--line:rgba(160,185,235,.18);--accent:#5EEAD4}}
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:grid;place-items:center;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;padding:24px 16px}
+  main{max-width:640px;width:100%}
+  h1{font-size:clamp(28px,6vw,40px);margin:0 0 8px;letter-spacing:-.02em}
+  p{color:var(--muted);line-height:1.55;margin:0 0 24px}
+  .grid{display:grid;gap:14px;grid-template-columns:1fr 1fr}
+  @media(max-width:520px){.grid{grid-template-columns:1fr}}
+  a{display:block;padding:20px;border-radius:16px;background:var(--card);border:1px solid var(--line);color:inherit;text-decoration:none}
+  a:hover,a:focus-visible{border-color:var(--accent);outline:0}
+  b{display:block;font-size:18px;margin-bottom:4px}
+  span{color:var(--muted);font-size:14px}
+  small{display:block;margin-top:22px;color:var(--muted)}
+</style>
+</head>
+<body>
+<main>
+  <h1>Meridian Exchange</h1>
+  <p>Two sample designs for a fictional currency exchange, prepared by Lighthouse Digital Productions. Pick one to open it.</p>
+  <div class="grid">
+    <a href="meridian-exchange-A-bright.html"><b>Version A: Bright</b><span>Light page with a navy globe</span></a>
+    <a href="meridian-exchange-B-midnight.html"><b>Version B: Midnight</b><span>Dark page with a glowing globe</span></a>
+  </div>
+  <small>Sample brand, sample rates. Nothing on these pages is sent anywhere.</small>
+</main>
+</body>
+</html>
